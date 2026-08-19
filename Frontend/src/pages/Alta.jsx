@@ -1,9 +1,9 @@
 
 import { validations } from '../utils/formValidations';
-import imgALtas from "@/assets/imgALtas.png";
+// import imgALtas from "@/assets/imgALtas.png";
 import "@/styles/alta.scss"
 import  useForm  from '../hooks/useForm';
-import { data } from 'react-router-dom';
+//import { data } from 'react-router-dom';
 
 export const Alta = () => {
 
@@ -16,6 +16,7 @@ export const Alta = () => {
       shortDescription:"",
       longDescription:"",
       stock:""
+      
     };
     const {
       form,
@@ -34,7 +35,7 @@ export const Alta = () => {
       <section className='alta-container'>
        <div className="alta-image">
           <img 
-           src={imgALtas}
+          //  src={imgALtas}
            alt='banner de formulario'
            />
        </div>

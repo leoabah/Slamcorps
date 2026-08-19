@@ -1,9 +1,9 @@
-import React, { useState } from 'react'
+ import{ useState } from 'react'
 import { Link } from 'react-router-dom'
-import { FaSearch, FaShoppingCart, FaUser , FaBars, FaTimes} from 'react-icons/fa'
+import { FaShoppingCart, FaUser , FaBars, FaTimes} from 'react-icons/fa'
 import { useContext } from "react"
 import { CartContext } from  "@/context/CartContext"
-import logoHeader from "@/assets/logo.png"
+import logoHeader from "@/assets/slam_logo.jpeg"
 import MiniCart from '@/components/MiniCart.jsx'
 import { AuthContext } from '../context/AuthContext'
 import SearchHome from "./SearchHome"
@@ -35,8 +35,8 @@ export default function Header() {
     <header className='header'>
         <nav className='nav-bar'>
             <div className='logo'>
-                <img className='logo-img' src={logoHeader} alt="logo del comercio"/>
-                <h3 className='logo-title' >Libreria<br/>Cosmica</h3>
+                <img className='logo-img' src={ logoHeader } alt="logo del comercio"/>
+                <h3 className='logo-title' >SLAM<br/>Corps</h3>
             </div>
             <button
              className='menu-btn'

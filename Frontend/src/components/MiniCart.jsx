@@ -2,7 +2,7 @@ import { useContext } from "react";
 import { Link } from "react-router-dom";
 import { CartContext} from "@/context/CartContext";
 
-export default function MiniCart({setOpenCart}) {
+export default function MiniCart() {
 
     const {
         cart,

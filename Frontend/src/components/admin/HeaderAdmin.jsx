@@ -1,4 +1,4 @@
-import { FaBell, FaChevronCircleDown, FaChevronDown } from "react-icons/fa";
+import { FaBell, FaChevronDown } from "react-icons/fa";
 import"../../styles/admin/_headerAdmin.scss"
 
 export default function HearderAdmin(){

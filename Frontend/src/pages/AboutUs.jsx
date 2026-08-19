@@ -1,9 +1,9 @@
-import React from 'react';
-import Lc_caja from  "@/assets/Lc_caja.png";
-import Lc_estante from "@/assets/Lc_estante.png";
-import Lc_shopping from "@/assets/Lc_shopping.png";
-import Lc_team from "@/assets/Lc_team.png";
-import Lc_space from "@/assets/Lc_space.png"
+// import React from 'react';
+// import Lc_caja from  "@/assets/Lc_caja.png";
+// import Lc_estante from "@/assets/Lc_estante.png";
+// import Lc_shopping from "@/assets/Lc_shopping.png";
+// import Lc_team from "@/assets/Lc_team.png";
+// import Lc_space from "@/assets/Lc_space.png"
 import "@/styles/_aboutUs.scss";
 
 const AboutUs = () => {
@@ -50,7 +50,7 @@ const AboutUs = () => {
       <br />
       <div className='gallery'>
 
-      <img src={Lc_shopping} alt="vista de frente del local" />
+      {/* <img src={Lc_shopping} alt="vista de frente del local" />
 
       <img src={Lc_team} alt="nuestro equipo " />
 
@@ -58,7 +58,7 @@ const AboutUs = () => {
 
       <img src={Lc_estante} alt="encuentra  en nuestra pacillos tu  gusto" />
 
-      <img src={Lc_caja} alt="abonar tu compras" />
+      <img src={Lc_caja} alt="abonar tu compras" /> */}
       </div>
     </div>
   </section>

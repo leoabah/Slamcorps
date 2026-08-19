@@ -1,7 +1,10 @@
+@use "./varabiables/colors" as *;
+
+
 .home{
     padding: 2rem;
-    background-color:#4A5A9E;
-    color:#FAE7D3;
+    background-color:$color-bg-main;
+    color:$color-text-main;
 
     h1[class="home-title"]{
         font-size: 2rem;

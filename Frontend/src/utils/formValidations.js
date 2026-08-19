@@ -38,11 +38,6 @@ export const validations = {
         message:
         "Minimo 20 caracteres"
     },
-    name:{
-        required:true,
-        pattern:/^[A-Za-zÀ-ÿ\s]{3,40}$/,
-        message: "El nombre debe tener entre 3 y 40 caracteres"
-    },
     email:{
         required:true,
         pattern:/^[^\s@]+@[^\s@]+\.[^\s@]+$/,
