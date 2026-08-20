@@ -1,14 +1,11 @@
-
-
-
 export const validations = {
-    
-    name:{
+
+    title:{
         required: true,
         pattern:
-        /^[A-Za-zÀ-ÿ\s]{3,40}$/,
+        /^[A-Za-zÀ-ÿ0-9\s]{3,40}$/,
         message: 
-        "el nombre debe tener entre 3 y 40 caracteres"
+        "el título debe tener entre 3 y 40 caracteres"
     },
     price:{
         required: true,
@@ -17,26 +14,12 @@ export const validations = {
         message: 
         "solo numero positivos"
     },
-    age: {
-        required: true,
-        pattern:
-        /^[0-9]{1,2}$/,
-        message:
-        "Edad invalida"
-    },
-    shortDescription:{
+    descripcion:{
         required: true ,
         pattern:
-        /^.{10,100}$/,
-        mensage:
-        "Minimo 10 caracteres"
-    },
-    longDescription:{
-        required:true,
-        pattern: 
-        /^.{20,500}$/,
+        /^.{10,500}$/,
         message:
-        "Minimo 20 caracteres"
+        "La descripción debe tener entre 10 y 500 caracteres"
     },
     email:{
         required:true,
@@ -50,4 +33,3 @@ export const validations = {
     }
 
 };
-

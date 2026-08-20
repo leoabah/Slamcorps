@@ -1,3 +1,4 @@
+import { AuthContext } from "@/context/AuthContext";
 import { Link } from "react-router-dom";
 import { useContext } from "react";
 import { toast } from "react-hot-toast";
@@ -19,8 +20,8 @@ export default function ProductsCard({
   const cartItem = cart.find(
     item => item._id === product._id
   );
-
-  const isAdmin = false;
+  const { user } = useContext(AuthContext);
+  const isAdmin = user?.role === "admin";
 
   const imageUrl = Array.isArray(product.image)
     ? product.image[0]

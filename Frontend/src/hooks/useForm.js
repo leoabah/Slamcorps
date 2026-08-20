@@ -1,5 +1,5 @@
-
 import { useState } from 'react'
+import { toast } from 'react-toastify';
 
 export default function useForm(
     initialState, validations
@@ -24,15 +24,19 @@ const validateField = (
         const rule =
         validations[name];
         if(!rule) return "";
+        // Si el campo no existe en el form (por ejemplo, quedó una
+        // regla vieja apuntando a un nombre que ya cambió), value
+        // llega undefined. Con "?." evitamos el crash y lo tratamos
+        // como campo vacío en vez de romper toda la app.
         if(
             rule.required 
             &&
-            !value.trim()
+            !value?.trim()
         ){
             return "Campo obligatorio"
         }
         if(
-            rule.pattern && !rule.pattern.test(value)
+            rule.pattern && !rule.pattern.test(value ?? "")
         ){
             return rule.message;
         }
@@ -54,15 +58,21 @@ const handleBlur = (e) =>{
 
 const validateForm = () => {
     let newErrors = {};
-    Object.keys(validations)
+    // Antes recorría TODAS las claves de "validations" (el archivo
+    // compartido entre formularios). Eso hacía que campos de OTROS
+    // formularios (ej: email, password del login) se validaran acá
+    // también, aunque no existan en este form, y fallaran siempre
+    // por ser "obligatorios" y llegar undefined.
+    // Ahora solo valida los campos que existen en el form actual.
+    Object.keys(form)
     .forEach(field => {
         const error =
         validateField(field, form[field]);
         if(error) {
             newErrors[field]= error;
         }
-        setErrors(newErrors);
     });
+    setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
 }
     const handleSubmit =

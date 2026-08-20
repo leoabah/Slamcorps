@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { FaShoppingCart, FaUser , FaBars, FaTimes} from 'react-icons/fa'
 import { useContext } from "react"
 import { CartContext } from  "@/context/CartContext"
-import logoHeader from "@/assets/slam_logo.jpeg"
+import logoHeader from "@/assets/slam_logo.png"
 import MiniCart from '@/components/MiniCart.jsx'
 import { AuthContext } from '../context/AuthContext'
 import SearchHome from "./SearchHome"
@@ -56,7 +56,10 @@ export default function Header() {
               :'div-links'}
               >
                  <Link to="/" className='link-nav' >Home</Link>
-                 <Link to="/alta" className='link-nav' >Alta</Link>
+                 {user?.role === "admin" && (
+                    <Link to="/alta">Alta de productos</Link>
+                  )
+                }
                  <Link to="/contact" className='link-nav' >Contacto</Link>
                  <Link to="/about" className='link-nav' >Nosotros</Link>
             
