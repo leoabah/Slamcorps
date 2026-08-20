@@ -1,0 +1,31 @@
+{
+  "name": "@voaii/proxima-nova",
+  "version": "4.5.2",
+  "description": "Self-host the Proxima Nova font in a neatly bundled NPM package.",
+  "main": "index.css",
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "voaii",
+    "font",
+    "font family",
+    "google fonts",
+    "Proxima Nova",
+    "proxima-nova"
+  ],
+  "author": "zsh <dan@varmag.com>",
+  "license": "MIT",
+  "homepage": "https://github.com/voaii/proxima-nova/tree/master/packages/proxima-nova#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/voaii/proxima-nova.git",
+    "directory": "packages/proxima-nova"
+  },
+  "bugs": {
+    "url": "https://github.com/voaii/proxima-nova/issues"
+  },
+  "scripts": {
+    "test": "npm run test"
+  }
+}

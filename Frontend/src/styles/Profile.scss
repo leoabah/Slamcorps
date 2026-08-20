@@ -1,0 +1,97 @@
+@use "./varabiables/colors" as *;
+.profile-page{
+    min-height: 100vh;
+    background: #4A5A9E;
+    padding: 2rem;
+    color: #FDFBF7;
+}
+
+.admin-link{
+    display:inline-block;
+    margin: 1rem 0;
+    padding:0.8rem 1.5rem;
+    background: #8DB8C8;
+    color: #14031F;
+    font-weight: bold;
+    border-radius: 10px;
+    text-decoration: none;
+    transition:.3s;
+}
+.admin-link:hover{
+    background: #A68A56;
+    transform: scale(1.05);
+}
+
+.profile-page h1{
+    text-align: center;
+    font-size: 3rem;
+    margin-bottom: 2rem;
+}
+
+.profile-card{
+    max-width: none;
+    margin:0 auto 3rem auto;
+    background: #5B6BB1;
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow:  0 10px 25px rgba(0,0,0,.2);
+}
+
+.profile-card p{
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+}
+
+.profile-page h2{
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.orders-container {
+    text-align: center;
+    margin-bottom: 2rem;
+    font-size: 2rem;
+}
+
+.order-card{
+    background: #FDFBF7;
+    color: #14031F;
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+
+    box-shadow:
+    0 5px 15px rgba(0,0,0,.2);
+}
+
+.order-card p {
+    margin-bottom: .7rem;
+}
+
+.order-card ul{
+    margin-top: 1rem;
+    padding-left: 1.5rem;
+}
+
+.order-card li{
+    margin-bottom:.4rem ;
+}
+
+.order-total{
+    margin-top: 1rem;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #4A5A9E;
+}
+
+@media (max-width: 768px) {
+    .profile-page h1{
+        font-size: 2rem;
+    }
+    .profile-card{
+        padding: 1.5rem;
+    }
+    .order-card{
+        padding: 1rem;
+    }
+}
