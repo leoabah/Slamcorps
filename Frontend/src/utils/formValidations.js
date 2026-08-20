@@ -1,5 +1,14 @@
 export const validations = {
 
+
+
+    name:{
+        required: true,
+        pattern:
+        /^[A-Za-zÀ-ÿ\s]{3,40}$/,
+        message: 
+        "el nombre debe tener entre 3 y 40 caracteres"
+    },
     title:{
         required: true,
         pattern:

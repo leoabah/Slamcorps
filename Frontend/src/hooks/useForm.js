@@ -22,13 +22,9 @@ export default function useForm(
 const validateField = (
     name , value) => {
         const rule =
-        validations[name];
+        validations?.[name];
         if(!rule) return "";
-        // Si el campo no existe en el form (por ejemplo, quedó una
-        // regla vieja apuntando a un nombre que ya cambió), value
-        // llega undefined. Con "?." evitamos el crash y lo tratamos
-        // como campo vacío en vez de romper toda la app.
-        if(
+       if(
             rule.required 
             &&
             !value?.trim()
@@ -36,9 +32,9 @@ const validateField = (
             return "Campo obligatorio"
         }
         if(
-            rule.pattern && !rule.pattern.test(value ?? "")
+            rule?.pattern && !rule.pattern.test(value ?? "")
         ){
-            return rule.message;
+            return rule.message || "Formato inválido";
         }
         return "";
     };
@@ -58,12 +54,6 @@ const handleBlur = (e) =>{
 
 const validateForm = () => {
     let newErrors = {};
-    // Antes recorría TODAS las claves de "validations" (el archivo
-    // compartido entre formularios). Eso hacía que campos de OTROS
-    // formularios (ej: email, password del login) se validaran acá
-    // también, aunque no existan en este form, y fallaran siempre
-    // por ser "obligatorios" y llegar undefined.
-    // Ahora solo valida los campos que existen en el form actual.
     Object.keys(form)
     .forEach(field => {
         const error =
