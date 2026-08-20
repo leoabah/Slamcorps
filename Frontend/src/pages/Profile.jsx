@@ -46,7 +46,7 @@ console.log(user?.role);
             <h1>Perfil</h1>
           
             {
-                user?.role === "Admin" && (
+                user?.role === "admin" && (
                     
                     <Link 
                     to="/admin"

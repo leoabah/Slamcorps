@@ -3,6 +3,7 @@ import { validations } from '../utils/formValidations';
 // import imgALtas from "@/assets/imgALtas.png";
 import "@/styles/alta.scss"
 import  useForm  from '../hooks/useForm';
+import productsApi from '../api/productsApi';
 //import { data } from 'react-router-dom';
 
 export const Alta = () => {
@@ -70,21 +71,21 @@ const [images, setImages] = useState([]);
 
     setLoading(true);
     try {
-      const response = await fetch("/api/products", {
-        method: "POST",
-        body: formData,
-       });
-
-      if (!response.ok) {
-        const errorBody = await response.json().catch(() => null);
-        throw new Error(errorBody?.message || "No se pudo crear el producto.");
-      }
+      const  token = localStorage.getItem("token");
+      
+      await productsApi.post("", formData, {
+        headers: {
+          "content-type":"multipart/form-data",
+          "Authorization": `Bearer ${token}`
+        }
+      });
 
       setSubmitSuccess(true);
       setImages([]);
       setImagePreviews([]);
     } catch (error) {
-      setSubmitError(error.message);
+      const message = error.response?.data?.message || "No se pudo crear el producto. Intentá de nuevo.";
+      setSubmitError(message);
     } finally {
       setLoading(false);
     }
@@ -331,8 +332,9 @@ const [images, setImages] = useState([]);
           type='submit'
           className='btn-submit'
           disabled={loading}
+          style={{ marginTop: 20 }}
           >
-            {loading ? "Enviando..." : "Enviar"}
+            {loading ? "Enviando..." : "Crear Producto"}
           </button>
         </form>
        </div>

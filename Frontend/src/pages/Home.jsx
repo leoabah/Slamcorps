@@ -10,12 +10,13 @@ import "@/styles/Carrusel.scss"
 import { toast } from "react-hot-toast"
 import banner1 from "@/assets/Banner1.png"
 import banner2 from "@/assets/Banner2.png"
-import banner3 from "@/assets/Banner3.png"
+import banner3 from "@/assets/Banner3.jpg"
+import banner4 from "@/assets/Banner4.jpg"
 
 
 export default function Home() {
    
-     const images =[banner1,banner2,banner3];
+     const images =[banner1,banner2,banner3,banner4];
      const {search} = useContext(SearchContext);
      const [products,setProducts]=useState([]);
      const filteredProducts = products.filter(product =>
@@ -31,7 +32,7 @@ export default function Home() {
       try {
 
          const response =
-         await productsApi.get("/");
+         await productsApi.get("");
 
          response.data.forEach(product => {
             console.log(product)
