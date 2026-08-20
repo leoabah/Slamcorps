@@ -16,7 +16,7 @@ const app = express();
     "http://localhost:5173",
     "http://localhost:5174",
     "https://leoabah.github.io",
-    "https://slamcorps.vercel.app/",
+    "https://slamcorps.vercel.app",
     ];
 
 app.get("/ping",(req,res)=>{
