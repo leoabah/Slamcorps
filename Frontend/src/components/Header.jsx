@@ -36,7 +36,7 @@ export default function Header() {
         <nav className='nav-bar'>
             <div className='logo'>
                 <img className='logo-img' src={ logoHeader } alt="logo del comercio"/>
-                <h3 className='logo-title' >SLAM<br/>Corps</h3>
+                <h3 className='logo-title' >SLAM Corps</h3>
             </div>
             <button
              className='menu-btn'
