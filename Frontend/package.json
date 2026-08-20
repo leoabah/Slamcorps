@@ -1,6 +1,6 @@
 {
   "name": "ecomerce-react2026",
-  "homepage": "https://leoabah.github.io/E-comerce_App",
+  "homepage": "https://leoabah.github.io/slamcorps",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -45,9 +45,9 @@
   "license": "ISC",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/leoabah/E-comerce_App.git"
+    "url": "git+https://github.com/leoabah/slamcorps.git"
   },
   "bugs": {
-    "url": "https://github.com/leoabah/E-comerce_App/issues"
+    "url": "https://github.com/leoabah/slamcorps/issues"
   }
 }
