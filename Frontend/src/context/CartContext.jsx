@@ -1,5 +1,7 @@
 import { createContext, useEffect, useState } from "react";
-export const CartContext =  createContext();
+
+export const CartContext = createContext();
+
 export function CartProvider({children}){
 
     const [cart,setCart] = useState(() =>{
@@ -17,9 +19,10 @@ export function CartProvider({children}){
     const addToCart = (product)=>{
         const exists =cart.find(
            item => item._id === product._id 
+           && item.size === product.size
         );
         if (exists) {
-            const updateCart = cart.map(item => item._id === product._id
+            const updateCart = cart.map(item => item._id === product._id && item.size === product.size
                 ?{
                     ...item,
                     quantity: item.quantity + 1
@@ -38,10 +41,10 @@ export function CartProvider({children}){
         }
     };
 
-    const increaseQuantity = (_id) => {
+    const increaseQuantity = (_id,size) => {
         const updatedCart = cart.map(
             item => 
-                item._id === _id 
+                item._id === _id && item.size === size
             ?{
                ...item,
             quantity: item.quantity + 1
@@ -50,9 +53,9 @@ export function CartProvider({children}){
         setCart(updatedCart);
     };
     
-    const decreaseQuantity = (_id) => {
+    const decreaseQuantity = (_id,size) => {
         const updatedCart = cart.map(item =>
-            item._id === _id
+            item._id === _id && item.size === size
             ? {
                 ...item,
                 quantity: 
@@ -66,9 +69,9 @@ export function CartProvider({children}){
         setCart(updatedCart)
     }
 
-    const removeFromCart = (_id) =>{
+    const removeFromCart = (_id,size) =>{
         setCart(
-            cart.filter(item => item._id !== _id)
+            cart.filter(item => !(item._id === _id && item.size === size))
         );
     };
 

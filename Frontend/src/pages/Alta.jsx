@@ -65,6 +65,7 @@ const [images, setImages] = useState([]);
     Object.entries(data).forEach(([key, value]) => {
       formData.append(key, value);
     });
+
     images.forEach((file) => {
       formData.append("image", file);
     });
@@ -75,7 +76,6 @@ const [images, setImages] = useState([]);
       
       await productsApi.post("", formData, {
         headers: {
-          "content-type":"multipart/form-data",
           "Authorization": `Bearer ${token}`
         }
       });

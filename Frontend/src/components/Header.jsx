@@ -57,7 +57,7 @@ export default function Header() {
               >
                  <Link to="/" className='link-nav' >Home</Link>
                  {user?.role === "admin" && (
-                    <Link to="/alta">Alta de productos</Link>
+                    <Link to="/alta" className='link-nav'>Alta de productos</Link>
                   )
                 }
                  <Link to="/contact" className='link-nav' >Contacto</Link>

@@ -22,26 +22,34 @@ export default function MiniCart() {
                 <>
                   {cart.map(item => (
                     <div
-                      key={item._id}
+                      key={`${item._id || item.id}-${item.size}`}
                       className="mini-cart-item"
                       >
                         <img 
-                        src={
-                            Array.isArray(item.image)
+                        src={!item.image
+                            ? "/placeholder.jpg"
+                            :Array.isArray(item.image)
                             ? import.meta.env.BASE_URL +
                             item.image[0].replace("/","")
                             : import.meta.env.BASE_URL +
                             item.image.replace("/","")
                         
                         }
-                        alt={item.name}
+                        alt={item.title || 
+                            "producto"
+                        }
                 />
 
                        <div className="mini-cart-info">
 
                         <h4>
-                            {item.name}
+                            {item.name || item.title}
                         </h4>
+                        {item.size && (
+                            <p className="item-size-badge">
+                                Talle:<strong>{item.size}</strong> 
+                            </p>
+                        )}
                         <p>
                             {item.quantity}
                           X {item.price}

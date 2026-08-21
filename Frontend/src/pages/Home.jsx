@@ -54,8 +54,15 @@ export default function Home() {
      const deleteProduct = async(id) =>{
 
       try{
+
+         const token = localStorage.getItem("token");
+
          await productsApi.delete(
-            `/${id}`
+            `/${id}`,{
+               headers: {
+                  "Authorization": `Bearer ${token}`
+               }
+            }
          );
          setProducts(
             products.filter(

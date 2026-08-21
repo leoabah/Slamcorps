@@ -15,7 +15,8 @@ export default function ProductDetail(){
 
     const [product,setProduct]=useState(null);
     const [mainImage, setMainImage]= useState("")
-
+    const [selectedSize, setSelectedSize] = useState("");
+    const sizes = ["S","M","L","XL"];
     useEffect(() => {
 
         const getProduct = async()=> { 
@@ -102,14 +103,32 @@ const images = Array.isArray(product.image)
 
                 </p>
 
-                
+                <div className="size-selector">
+                    <p><strong>Selecciona tu talle</strong>:</p>
+                    <div className="size-buttons">
+                        {sizes.map((size) => (
+                            <button
+                                key={size}
+                                type="button"
+                                className={ `btn-size ${selectedSize === size ? "active" : ''}` }
+                                onClick={() => setSelectedSize(size)}
+                            >
+                                {size}
+                            </button>
+                        ))}
+                    </div>
+                </div>
 
                 <button className="btn-buy"
                 onClick={() => {
+                    if (!selectedSize) {
+                        toast.error("Por favor selecciona un talle");
+                        return;
+                    }
 
-                addToCart(product);
+                    addToCart({ ...product, size: selectedSize});
 
-                toast.success("Producto agregado");
+                    toast.success(`Producto (${selectedSize}) agregado`);
 
               }}
                 >
