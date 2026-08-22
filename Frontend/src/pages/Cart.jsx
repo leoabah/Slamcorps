@@ -70,7 +70,6 @@ export default function Cart(){
         );
     }
 };
-
      return(
         <div className="main-cartshop">
             
@@ -88,7 +87,7 @@ export default function Cart(){
             ) : (
                 <>
                 {cart.map(item => (
-                    <div key={item._id}
+                    <div key={`${item._id}-${item.size}`}
                     className="cart-item"
                     >
                         <img 
@@ -101,6 +100,11 @@ export default function Cart(){
                         }
                         />
                         <h3>{item.title}</h3>
+                        {item.size && (
+                            <p className="item-size-badge">
+                                Talle:<strong>{item.size}</strong> 
+                            </p>
+                        )}
 
                         <p>
                             X{item.quantity}

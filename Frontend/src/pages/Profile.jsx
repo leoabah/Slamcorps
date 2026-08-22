@@ -94,15 +94,22 @@ console.log(user?.role);
                         <p>
                             <strong>Fecha:</strong>{" "}
                             { order.createdAt
-                            ? new Date(order.createdAt).    toLocaleTimeString("es-AR")
+                            ? new Date(order.createdAt).toLocaleTimeString("es-AR",{
+                                day: "2-digit",
+                                month: "2-digit",
+                                year: "numeric",
+                                hour: "2-digit",
+                                minute: "2-digit",
+                            })
                             : "Sin fecha"}
                         </p>
 
                         <ul>
                             {order.products.map((item) => (
                                 <li
-                                key={item._id}>
+                                key={`${item._id}-${item.size || "sin-talle"}`}>
                                     {item.productId?.title ||  "Producto eliminado"}
+                                    {item.size && ` | talle: ${item.size}`}
                                     {"  | cantidad: "}
                                     {item.quantity}
                                 </li>

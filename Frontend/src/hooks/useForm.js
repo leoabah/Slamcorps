@@ -4,6 +4,9 @@ import { toast } from 'react-toastify';
 export default function useForm(
     initialState, validations
 ){
+    const resetForm = () => {
+        setForm(initialState);
+    };
     const [form,setForm]=
     useState(initialState);
     const [errors, setErrors]=
@@ -81,6 +84,7 @@ const validateForm = () => {
         errors,
         handleChange,
         handleBlur,
-        handleSubmit
+        handleSubmit,
+        resetForm
     };
 }

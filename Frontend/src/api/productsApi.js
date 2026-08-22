@@ -3,6 +3,6 @@ import axios from "axios";
 
 const productsApi = axios.create({
     baseURL:
-   "https://slamcorps.onrender.com/api/products"
+   `${import.meta.env.VITE_API_URL}/api/products`
 });
 export default productsApi;

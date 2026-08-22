@@ -1,25 +1,24 @@
 import { AuthContext } from "@/context/AuthContext";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useContext } from "react";
-import { toast } from "react-hot-toast";
-import { CartContext } from "@/context/CartContext";
-import { FaMinus, FaPlus } from "react-icons/fa";
+//import { toast } from "react-hot-toast";
+//import { CartContext } from "@/context/CartContext";
+//import { FaMinus, FaPlus } from "react-icons/fa";
 
 export default function ProductsCard({
   product,
   deleteProduct,
 }) {
+  const navigate = useNavigate();
+  // const {
+  //   cart,
+  //   increaseQuantity,
+  //   decreaseQuantity,
+  // } = useContext(CartContext);
 
-  const {
-    cart,
-    addToCart,
-    increaseQuantity,
-    decreaseQuantity,
-  } = useContext(CartContext);
-
-  const cartItem = cart.find(
-    item => item._id === product._id
-  );
+  // const cartItem = cart.find(
+  //   item => item._id === product._id
+  // );
   const { user } = useContext(AuthContext);
   const isAdmin = user?.role === "admin";
 
@@ -54,50 +53,48 @@ export default function ProductsCard({
 
         {
 
-          !cartItem ? (
+        //  !cartItem ? (
 
             <button
               className="btn-card"
               onClick={() => {
 
-                addToCart(product);
-
-                toast.success("Producto agregado");
-
+               navigate(`/products/${product._id}`);
               }}
             >
               Comprar
             </button>
 
-          ) : (
+          //) 
+          //: (
 
-            <div className="quantity-controls">
+          //   <div className="quantity-controls">
 
-              <button
-                className="btn-count"
-                onClick={() =>
-                  decreaseQuantity(product._id)
-                }
-              >
-                <FaMinus />
-              </button>
+          //     <button
+          //       className="btn-count"
+          //       onClick={() =>
+          //         decreaseQuantity(product._id)
+          //       }
+          //     >
+          //       <FaMinus />
+          //     </button>
 
-              <span>
-                {cartItem.quantity}
-              </span>
+          //     <span>
+          //       {cartItem.quantity}
+          //     </span>
 
-              <button
-                className="btn-count"
-                onClick={() =>
-                  increaseQuantity(product._id)
-                }
-              >
-                <FaPlus />
-              </button>
+          //     <button
+          //       className="btn-count"
+          //       onClick={() =>
+          //         increaseQuantity(product._id)
+          //       }
+          //     >
+          //       <FaPlus />
+          //     </button>
 
-            </div>
+          //   </div>
 
-          )
+          // )
 
         }
 

@@ -16,12 +16,21 @@ const orderSchema = new mongoose.Schema({
             type: mongoose.Schema.Types.ObjectId,
             ref:"Product"
         },
-
-        quantity:Number
+        size: {
+            type: String,
+            required: true
+        },
+        quantity: {
+            type: Number,
+            required: true
+        }
     }
 ],
 
-total: Number,
+total: {
+    type: Number,
+    default: 0
+},
 
 status :{
     type: String,

@@ -28,6 +28,7 @@ export default function Home() {
     useEffect(() => {
 
    const getProducts = async() => {
+      console.log("URL usada:", import.meta.env.VITE_API_URL);
 
       try {
 

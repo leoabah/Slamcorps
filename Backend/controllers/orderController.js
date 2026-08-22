@@ -7,11 +7,16 @@ export const createOrder = async (
 ) => {
     console.log("BODY", req.body);
     try{
+        const formattedProducts = req.body.products.map((product) => ({
+            productId: product.productId || product._id ,
+            size: product.size,
+            quantity: product.quantity
+        }));
 
         const order =
         await Order.create({
             user:req.user.id,
-            products:req.body.products,
+            products:formattedProducts,
             total: req.body.total
         });
         console.log("ORDER CREADA:", order);

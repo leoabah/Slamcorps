@@ -22,11 +22,12 @@ export const Alta = () => {
       errors,
       handleSubmit,
       handleChange,
-      handleBlur
+      handleBlur,
+      resetForm
     } =
     useForm(initiaForm, validations);
 
-const [images, setImages] = useState([]);
+  const [images, setImages] = useState([]);
   const [imagePreviews, setImagePreviews] = useState([]);
 
   const MAX_IMAGES = 4;
@@ -78,11 +79,15 @@ const [images, setImages] = useState([]);
         headers: {
           "Authorization": `Bearer ${token}`
         }
+
       });
 
       setSubmitSuccess(true);
       setImages([]);
       setImagePreviews([]);
+      
+      resetForm();
+
     } catch (error) {
       const message = error.response?.data?.message || "No se pudo crear el producto. Intentá de nuevo.";
       setSubmitError(message);
