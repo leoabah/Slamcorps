@@ -105,6 +105,25 @@
     border-color: #000;
 }
 
+.quantity-controls{
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 2rem 0px;
+    justify-self: flex-start
+
+}
+
+.btn-count{
+    background-color: burlywood;
+    width: 35px;
+    height:35px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1.2rem;
+    color:#f6f4f2;
+}
+
 .btn-buy{
     background: #3483FA;
     color:azure;
@@ -166,4 +185,5 @@
     .detail-info h2 {
         font-size: 1.5rem;
     }
+   
 }

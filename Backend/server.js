@@ -19,9 +19,9 @@ const app = express();
     "https://slamcorps.vercel.app",
     ];
 
-// app.get("/ping",(req,res)=>{
-//     res.status(200).send("pong");
-// });
+app.get("/ping",(req,res)=>{
+    res.status(200).send("pong");
+});
 app.use(cors({
     origin: function(origin,callback){
         if(!origin || allowedOrigins.includes(origin)){
