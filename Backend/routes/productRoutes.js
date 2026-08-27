@@ -1,13 +1,13 @@
 import express from "express";
 import authMiddleware from "../middleware/authMiddleware.js";
 import adminMiddleware from "../middleware/adminMiddleware.js";
-import upload from "../middleware/uploadMiddleware.js";
+//import upload from "../middleware/uploadMiddleware.js";
 
  import {
     getProducts,
     getProductById,
     createProduct,
-    updateProduct,
+    //updateProduct,
     deleteProduct
  } from "../controllers/productController.js";
 
@@ -21,7 +21,7 @@ import upload from "../middleware/uploadMiddleware.js";
     "/",
     authMiddleware,
     adminMiddleware,
-    upload.array("image", 4),
+    //upload.array("image", 4),
     createProduct
  );
 
@@ -29,8 +29,8 @@ import upload from "../middleware/uploadMiddleware.js";
     "/:id",
     authMiddleware,
     adminMiddleware,
-    upload.array("image", 4),
-    updateProduct
+   //upload.array("image", 4),
+    //updateProduct
  )
 
  router.delete("/:id", authMiddleware, adminMiddleware, deleteProduct);

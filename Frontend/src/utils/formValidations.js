@@ -23,7 +23,7 @@ export const validations = {
         message: 
         "solo numero positivos"
     },
-    descripcion:{
+    description:{
         required: true ,
         pattern:
         /^.{10,500}$/,

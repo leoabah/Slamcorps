@@ -4,6 +4,7 @@ import { validations } from '../utils/formValidations';
 import "@/styles/alta.scss"
 import  useForm  from '../hooks/useForm';
 import productsApi from '../api/productsApi';
+
 //import { data } from 'react-router-dom';
 
 export const Alta = () => {
@@ -13,7 +14,7 @@ export const Alta = () => {
       title:"",
       price:"",
       category:"",
-      descripcion:"",
+      description:"",
       stock:""
 
     };
@@ -27,83 +28,114 @@ export const Alta = () => {
     } =
     useForm(initiaForm, validations);
 
-  const [images, setImages] = useState([]);
-  const [imagePreviews, setImagePreviews] = useState([]);
+    const MAX_IMAGES = 4;
 
-  const MAX_IMAGES = 4;
-
-  const handleImageChange = (e) => {
-    const files = Array.from(e.target.files);
-    if (!files.length) return;
-
-    const combined = [...images, ...files].slice(0, MAX_IMAGES);
-    setImages(combined);
-    setImagePreviews(combined.map((file) => URL.createObjectURL(file)));
-  };
-
-  const removeImage = (indexToRemove) => {
-    const combined = images.filter((_, i) => i !== indexToRemove);
-    setImages(combined);
-    setImagePreviews(combined.map((file) => URL.createObjectURL(file)));
-  };
-
-  // Estados para saber qué está pasando durante el envío
-  const [loading, setLoading] = useState(false);
+  const [imageType, setImageType] = useState("file");
+  const [ loading, setLoading] = useState(false);
   const [submitError, setSubmitError] = useState(null);
   const [submitSuccess, setSubmitSuccess] = useState(false);
+  
+  const [files, setFiles]=useState([])
+  const [imagePreviews, setImagePreviews] = useState([]);
 
+  const handleFileChange = (e) =>{
+    const selectedFiles = Array.from(e.target.files);
+    if (!selectedFiles.length) return;
+
+    const combined = [...files, ...selectedFiles].slice(0,     MAX_IMAGES);
+      setFiles(combined);
+      setImagePreviews(combined.map((file)=>URL.createObjectURL((file))))
+    };
+    
+
+  const removeFile = (indexToRemove) =>{
+    const combined = files.filter((_, i) => i !== indexToRemove);
+    setFiles(combined);
+    setImagePreviews(combined.map((file) => URL.createObjectURL(file)))
+   
+  };
+
+  const [urls, setUrls]= useState([""]);
+
+  const handleUrlChange = (index, value) => {
+    const updateUrls = [...urls];
+    updateUrls[index] = value;
+    setUrls(updateUrls);
+  };
+
+  const addUrlField = () => {
+    if (urls.length < MAX_IMAGES)
+      setUrls([...urls, ""]);
+  };
+
+  const removeUrlField = (indexToRemove) =>{
+    const updateUrls = urls.filter((_, index) => index  !== indexToRemove);
+    setUrls(updateUrls.length >0 ? updateUrls : [""]);
+  }
+
+  
   const  sendForm = async (data)=>{
     setSubmitError(null);
     setSubmitSuccess(false);
+    
+    const token = localStorage.getItem("token");
+    let payload;
+    let headers = { "Authorization" : `Bearer ${token}`};
 
-    if (images.length === 0) {
-      setSubmitError("Agregá al menos una imagen del producto.");
-      return;
+    if (imageType === "file") {
+      if (files.length === 0) {
+        setSubmitError("Agrega al menos una imagen del producto.");
+        return;
+      }
+
+      payload = new FormData();
+      Object.entries(data).forEach(([key, value]) => payload.append(key, value));
+      files.forEach((file) => payload.append("image", file))
+
+      headers["Content-Type"] = "multipart/form-data";
+    } else {
+      const clearUrls = urls.map((u) => u.trim()).filter((u) => u !== "");
+      if (clearUrls.length === 0){
+        setSubmitError("Ingresa al menos URL valida.");
+        return;
+      }
+
+      payload = {
+        title: data.title,
+        price: Number(data.price),
+        category: data.category,
+        description: data.category,
+        stock: Number(data.stock),
+        imageURLs: clearUrls
+      };
+      headers["Content-Type"] = "application/json";
     }
-
-    // Se arma un FormData porque hay que mandar texto + archivos juntos
-    const formData = new FormData();
-    Object.entries(data).forEach(([key, value]) => {
-      formData.append(key, value);
-    });
-
-    images.forEach((file) => {
-      formData.append("image", file);
-    });
 
     setLoading(true);
-    try {
-      const  token = localStorage.getItem("token");
-      
-      await productsApi.post("", formData, {
-        headers: {
-          "Authorization": `Bearer ${token}`
-        }
-
-      });
+     try{
+      await productsApi.post("/", payload, { headers });
 
       setSubmitSuccess(true);
-      setImages([]);
+      setFiles([]);
       setImagePreviews([]);
-      
+      setUrls([""]);
       resetForm();
-
-    } catch (error) {
-      const message = error.response?.data?.message || "No se pudo crear el producto. Intentá de nuevo.";
+     } catch (error){
+      const message = error.response?.data?.message || "No se pudo crear el producto. Intenta de nuevo.";
       setSubmitError(message);
-    } finally {
+     } finally {
       setLoading(false);
-    }
+     }
   };
 
   return (
      <div className='alta-contain'>
       <section className='alta-container'>
        <div className="alta-image">
-          <img
+          {/* <img
           //  src={imgALtas}
            alt='banner de formulario'
-           />
+           /> */}
        </div>
        <div className='alta-form-container'>
         <h1 style={{"marginBottom":25}}
@@ -111,6 +143,19 @@ export const Alta = () => {
         >
           Altas de Productos
         </h1>
+        {submitSuccess && 
+        <p style={{color:"green",
+           fontWeight:"bold"
+        }}>
+          !Producto creado exitosamente!
+        </p>
+        }
+        {submitError && 
+        <p style={{color:"red",
+          fontWeight:"bold"
+        }}
+        ></p>
+        }
         <form
             className="alta-form"
             onSubmit={handleSubmit(sendForm)}
@@ -166,16 +211,16 @@ export const Alta = () => {
             </label>
             <textarea
 
-            name='descripcion'
+            name='description'
             placeholder="Descripción del producto..."
-            value={form.descripcion}
+            value={form.description}
              onChange={handleChange}
              onBlur={handleBlur}
             />
             {
-              errors.descripcion && (
+              errors.description && (
                 <p className='error'>
-                  {errors.descripcion}
+                  {errors.description}
                 </p>
               )
             }
@@ -202,145 +247,56 @@ export const Alta = () => {
             }
           </div>
 
-          <div className='form-group'>
-            <label>
-              Imágenes del producto (hasta {MAX_IMAGES}, la primera es la principal):
-            </label>
-            <input
-              type="file"
-              name="images"
-              accept="image/*"
-              multiple
-              disabled={images.length >= MAX_IMAGES}
-              onChange={handleImageChange}
-            />
-            {imagePreviews.length > 0 && (
-              <div style={{ display: "flex", gap: 10, marginTop: 10, flexWrap: "wrap" }}>
-                {imagePreviews.map((src, index) => (
-                  <div key={src} style={{ position: "relative" }}>
-                    <img
-                      src={src}
-                      alt={`Vista previa ${index + 1}`}
-                      style={{
-                        width: 100,
-                        height: 100,
-                        objectFit: "cover",
-                        borderRadius: 8,
-                        border: index === 0 ? "3px solid #2e7d32" : "1px solid #ccc",
-                      }}
-                    />
-                    {index === 0 && (
-                      <span style={{
-                        position: "absolute", bottom: 4, left: 4,
-                        background: "#2e7d32", color: "#fff",
-                        fontSize: 10, padding: "2px 6px", borderRadius: 4
-                      }}>
-                        Principal
-                      </span>
-                    )}
-                    <button
-                      type="button"
-                      onClick={() => removeImage(index)}
-                      style={{
-                        position: "absolute", top: -6, right: -6,
-                        background: "#c62828", color: "#fff",
-                        border: "none", borderRadius: "50%",
-                        width: 20, height: 20, cursor: "pointer"
-                      }}
-                    >
-                      ×
-                    </button>
-                  </div>
-                ))}
+          
+            {/* ─── CONTROL DE IMÁGENES HÍBRIDO ─── */}
+            <div className='form-group' style={{ border: '1px solid #ddd', padding: 15, borderRadius: 8, marginTop: 20 }}>
+              <label style={{ fontWeight: 'bold', marginBottom: 10, display: 'block' }}>Método de carga de imágenes:</label>
+              <div style={{ marginBottom: 15, display: 'flex', gap: 20 }}>
+                <label>
+                  <input type="radio" name="imageType" value="file" checked={imageType === "file"} onChange={() => setImageType("file")} />
+                  Subir desde PC (Cliente)
+                </label>
+                <label>
+                  <input type="radio" name="imageType" value="url" checked={imageType === "url"} onChange={() => setImageType("url")} />
+                  Pegar URL de Internet (Vos)
+                </label>
               </div>
-            )}
-          </div>
 
-          <div className='checkbox-group'>
-            <label>
-              <input
-                type="radio"
-                name="category"
-                value="short"
-                checked={form.category === "short"}
-                onChange={handleChange}
-              />
-              Short
-            </label>
-            <label>
-              <input
-                type="radio"
-                name="category"
-                value="pantalon"
-                checked={form.category === "pantalon"}
-                onChange={handleChange}
-              />
-              Pantalón
-            </label>
-            <label>
-              <input
-                type="radio"
-                name="category"
-                value="jogging"
-                checked={form.category === "jogging"}
-                onChange={handleChange}
-              />
-              Jogging
-            </label>
-            <label>
-              <input
-                type="radio"
-                name="category"
-                value="gorra"
-                checked={form.category === "gorra"}
-                onChange={handleChange}
-              />
-              Gorra
-            </label>
-            <label>
-              <input
-                type="radio"
-                name="category"
-                value="remera"
-                checked={form.category === "remera"}
-                onChange={handleChange}
-              />
-              Remera
-            </label>
-            <label>
-              <input
-                type="radio"
-                name="category"
-                value="buzo"
-                checked={form.category === "buzo"}
-                onChange={handleChange}
-              />
-              Buzo
-            </label>
-            {
-              errors.category && (
-                <p className='error'>
-                  {errors.category}
-                </p>
-              )
-            }
-          </div>
-
-          {submitError && (
-            <p className='error'>{submitError}</p>
-          )}
-          {submitSuccess && (
-            <p style={{ color: "#2e7d32" }}>Producto creado con éxito.</p>
-          )}
-
-          <button
-          type='submit'
-          className='btn-submit'
-          disabled={loading}
-          style={{ marginTop: 20 }}
-          >
-            {loading ? "Enviando..." : "Crear Producto"}
-          </button>
+              {/* RENDER CONDICIONAL SEGÚN LA SELECCIÓN */}
+              {imageType === "file" ? (
+                <div>
+                  <input type="file" name="image" accept="image/*" multiple disabled={files.length >= MAX_IMAGES} onChange={handleFileChange} />
+                  {imagePreviews.length > 0 && (
+                    <div style={{ display: "flex", gap: 10, marginTop: 10, flexWrap: "wrap" }}>
+                      {imagePreviews.map((src, index) => (
+                        <div key={src} style={{ position: "relative" }}>
+                          <img src={src} alt={`Vista previa ${index + 1}`} style={{ width: 80, height: 80, objectFit: "cover", borderRadius: 8, border: index === 0 ? "3px solid #2e7d32" : "1px solid #ccc" }} />
+                          {index === 0 && <span style={{ position: "absolute", bottom: 2, left: 2, background: "#2e7d32", color: "#fff", fontSize: 8, padding: "1px 4px", borderRadius: 4 }}>Principal</span>}
+                          <button type="button" onClick={() => removeFile(index)} style={{ position: "absolute", top: -5, right: -5, background: "#c62828", color: "#fff", border: "none", borderRadius: "50%", width: 18, height: 18, cursor: "pointer" }}>×</button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div>
+                  {urls.map((url, index) => (
+                    <div key={index} style={{ display: 'flex', gap: 5, marginBottom: 8, alignItems: 'center' }}>
+                      <input type="text" placeholder={`URL de la imagen ${index + 1} ${index === 0 ? '(Principal)' : ''}`} value={url} onChange={(e) => handleUrlChange(index, e.target.value)} style={{ flex: 1 }} />
+                      {urls.length > 1 && (
+                        <button type="button" onClick={() => removeUrlField(index)} style={{ background: '#c62828', color: '#fff', border: 'none', padding: '5px 10px', borderRadius: 4, cursor: 'pointer' }}>Eliminar</button>
+                      )}
+                    </div>
+                  ))}
+                  {urls.length < MAX_IMAGES && (
+                    <button type="button" onClick={addUrlField} style={{ background: '#0288d1', color: '#fff', border: 'none', padding: '5px 10px', borderRadius: 4, cursor: 'pointer', marginTop: 5 }}>+ Añadir otra URL</button>
+                  )}
+                </div>
+              )}
+            </div>
+              <button type="submit" disabled={loading} style={{ marginTop: 25, width: '100%', padding: '10px',
+               justifyItems:"center", background: '#2e7d32', color: '#fff', border: 'none', borderRadius: 4, cursor: 'pointer' }}>{loading ? "Guardando..." : "Crear Producto"}
+              </button>
         </form>
        </div>
       </section>

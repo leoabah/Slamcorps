@@ -33,7 +33,7 @@ export default function Home() {
       try {
 
          const response =
-         await productsApi.get("");
+         await productsApi.get("/api/products");
 
          response.data.forEach(product => {
             console.log(product)

@@ -1,7 +1,7 @@
 
 import { useState} from 'react'
 import { toast } from 'react-hot-toast'
-// import imgALtas from "@/assets/imgALtas.png";
+import imgCont from "@/assets/imgCont.webp";
 
 export default function Contact() {
 
@@ -101,7 +101,7 @@ export default function Contact() {
 
       <div className='divImage'>
         <img 
-                   //src={imgALtas}
+                   src={imgCont}
                    alt='banner de formulario'
                    />
       </div>

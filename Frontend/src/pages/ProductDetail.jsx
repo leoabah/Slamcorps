@@ -4,6 +4,7 @@ import { useEffect,useState } from "react";
 import { useContext } from "react";
 import { CartContext } from "@/context/CartContext";
 import { toast } from "react-hot-toast";
+import { FaMinus, FaPlus } from "react-icons/fa";
 import productsApi from "../api/productsApi";
 
 
@@ -11,24 +12,21 @@ import productsApi from "../api/productsApi";
 export default function ProductDetail(){
     const {id} = useParams();
     const navigate = useNavigate();
-    const {addToCart} = useContext(CartContext);
+    const {
+        addToCart,
+    } = useContext(CartContext);
 
     const [product,setProduct]=useState(null);
     const [mainImage, setMainImage]= useState("")
     const [selectedSize, setSelectedSize] = useState("");
+    const [quantity, setQuantity] = useState(1);
     const sizes = ["S","M","L","XL"];
     useEffect(() => {
 
         const getProduct = async()=> { 
 
         try{
-            const response = 
-
-               await productsApi.get(
-
-                `/${id}`
-
-               );
+            const response = await productsApi.get(`/api/products/${id}`);
                console.log(response.data);
                setProduct(response.data);
                
@@ -118,7 +116,33 @@ const images = Array.isArray(product.image)
                         ))}
                     </div>
                 </div>
+{selectedSize && (
+                    <div className="quantity-controls">
+                        <button
+                            type="button"
+                            className="btn-count"
+                            onClick={() => setQuantity((currentQuantity) =>
+                                Math.max(1, currentQuantity - 1)
+                            )}
+                            aria-label="Disminuir cantidad"
+                        >
+                            <FaMinus />
+                        </button>
 
+                        <span>{quantity}</span>
+
+                        <button
+                            type="button"
+                            className="btn-count"
+                            onClick={() => setQuantity((currentQuantity) =>
+                                currentQuantity + 1
+                            )}
+                            aria-label="Aumentar cantidad"
+                        >
+                            <FaPlus />
+                        </button>
+                    </div>
+                )}
                 <button className="btn-buy"
                 onClick={() => {
                     if (!selectedSize) {
@@ -126,7 +150,7 @@ const images = Array.isArray(product.image)
                         return;
                     }
 
-                    addToCart({ ...product, size: selectedSize});
+                    addToCart({ ...product, size: selectedSize}, quantity);
 
                     toast.success(`Producto (${selectedSize}) agregado`);
 
@@ -134,6 +158,9 @@ const images = Array.isArray(product.image)
                 >
                     Comprar ahora
                 </button>
+
+                
+
                 <button className="btn-back"
                   onClick={() => navigate(-1)}
                >

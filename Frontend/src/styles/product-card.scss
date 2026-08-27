@@ -69,6 +69,10 @@
     flex:1;
 
     padding:18px;
+    
+    gap:5px;
+
+    overflow-y: scroll;
 
 }
 
@@ -138,7 +142,9 @@
 
     gap:15px;
 
-    margin-bottom:15px;
+    margin:2rem 0;
+
+    justify-self: flex-start;
 
 }
 
@@ -209,6 +215,8 @@
 
     cursor:pointer;
 
+    justify-content: center;
+
 }
 
 .btn-edit{
@@ -226,6 +234,8 @@
     padding:10px;
 
     border-radius:8px;
+
+    justify-content: center;
 
 }
 

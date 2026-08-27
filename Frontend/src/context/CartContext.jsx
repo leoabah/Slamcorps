@@ -16,7 +16,7 @@ export function CartProvider({children}){
     );
     }, [cart]);
 
-    const addToCart = (product)=>{
+    const addToCart = (product, quantity = 1)=>{
         const exists =cart.find(
            item => item._id === product._id 
            && item.size === product.size
@@ -25,7 +25,7 @@ export function CartProvider({children}){
             const updateCart = cart.map(item => item._id === product._id && item.size === product.size
                 ?{
                     ...item,
-                    quantity: item.quantity + 1
+                    quantity: item.quantity + quantity
                 }
                 :item
             );
@@ -35,7 +35,7 @@ export function CartProvider({children}){
                 ...cart,
                 {
                     ...product,
-                    quantity: 1
+                    quantity
                 }
             ]);
         }
