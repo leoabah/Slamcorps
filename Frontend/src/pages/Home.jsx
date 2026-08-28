@@ -98,14 +98,14 @@ export default function Home() {
           <h1 
           className="home-title"
           >
-            Bienvenido en la Libreria Cosmica
+            Bienvenido a Slam Corps
             </h1>
          <p>
-            <em>Bienvenido a Slam Corps
+            <em>
 
            Diseñamos ropa urbana pensando en tu comodidad diaria. 
            Explora prendas esenciales de estilo moderno, 
-           alta calidad y precios al alcance de todos.
+           calidad y precios al alcance de todos.
            </em>
          </p>
           <br />

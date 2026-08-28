@@ -26,12 +26,12 @@ export default function ProductsCard({
     ? product.image[0]
     : product.image;
 
-  const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:3000";
+  const apiUrl = import.meta.env.VITE_API_URL || "https://slamcorps.onrender.com";
   const finalImage = imageUrl
-  ? imageUrl.startsWith("/uploads/")
-    ? `${apiUrl}${imageUrl}`
-    : imageUrl
-  : "/placeholder.jpg";
+    ? imageUrl.startsWith("/uploads/")
+      ? `${apiUrl}${imageUrl}`
+      : `${import.meta.env.BASE_URL}${imageUrl.replace(/^\//, "")}`
+    : `${import.meta.env.BASE_URL}placeholder.jpg`;
 
   return (
 
