@@ -104,7 +104,7 @@ export const Alta = () => {
         title: data.title,
         price: Number(data.price),
         category: data.category,
-        description: data.category,
+        description: data.description,
         stock: Number(data.stock),
         imageURLs: clearUrls
       };

@@ -33,7 +33,7 @@ export default function Home() {
       try {
 
          const response =
-         await productsApi.get("/api/products");
+         await productsApi.get("");
 
          response.data.forEach(product => {
             console.log(product)
@@ -42,8 +42,9 @@ export default function Home() {
          setProducts(response.data);
 
       } catch(error){
-
-         console.log(error);
+         console.error("Error al traer productos:", error);
+             toast.error("No se pudieron cargar los productos");
+         
       }
    };
 
@@ -67,7 +68,7 @@ export default function Home() {
          );
          setProducts(
             products.filter(
-               product => product.id !== id
+               product => product._id !== id
             )
          );
 

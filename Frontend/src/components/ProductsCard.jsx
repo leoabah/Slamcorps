@@ -26,9 +26,12 @@ export default function ProductsCard({
     ? product.image[0]
     : product.image;
 
+  const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:3000";
   const finalImage = imageUrl
-    ? import.meta.env.BASE_URL + imageUrl.replace("/", "")
-    : import.meta.env.BASE_URL + "placeholder.jpg";
+  ? imageUrl.startsWith("/uploads/")
+    ? `${apiUrl}${imageUrl}`
+    : imageUrl
+  : "/placeholder.jpg";
 
   return (
 

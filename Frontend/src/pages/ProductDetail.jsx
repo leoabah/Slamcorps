@@ -26,7 +26,7 @@ export default function ProductDetail(){
         const getProduct = async()=> { 
 
         try{
-            const response = await productsApi.get(`/api/products/${id}`);
+            const response = await productsApi.get(`/${id}`);
                console.log(response.data);
                setProduct(response.data);
                
