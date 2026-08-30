@@ -92,7 +92,8 @@ export const Alta = () => {
       Object.entries(data).forEach(([key, value]) => payload.append(key, value));
       files.forEach((file) => payload.append("image", file))
 
-      headers["Content-Type"] = "multipart/form-data";
+      // Axios maneja automáticamente el Content-Type con FormData, no es necesario especificarlo
+      // headers["Content-Type"] = "multipart/form-data";
     } else {
       const clearUrls = urls.map((u) => u.trim()).filter((u) => u !== "");
       if (clearUrls.length === 0){

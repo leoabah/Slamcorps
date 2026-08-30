@@ -6,6 +6,7 @@ import { CartContext } from "@/context/CartContext";
 import { toast } from "react-hot-toast";
 import { FaMinus, FaPlus } from "react-icons/fa";
 import productsApi from "../api/productsApi";
+import { getImageUrl } from "@/utils/imageUrl";
 
 
 
@@ -56,20 +57,14 @@ const images = Array.isArray(product.image)
 
                 <img
                 className="main-image"
-                    src={
-                           import.meta.env.BASE_URL +
-                            mainImage.replace("/", "")
-                        }
+                    src={getImageUrl(mainImage)}
                     alt={product.title}
                 />
                 <div className="thumbnails">
                     {images.map((img, index) => (
                         <img
                         key={index}
-                       src={
-                            import.meta.env.BASE_URL +
-                             img.replace("/", "")
-                            }
+                       src={getImageUrl(img)}
                             alt = "thumbnails"
                             onClick= {() =>
                                 setMainImage(img)

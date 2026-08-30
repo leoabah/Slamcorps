@@ -37,6 +37,20 @@ app.use(cors({
 
 app.use(express.json());
 
+// 🔍 MIDDLEWARE DE DEBUG: Log de todas las solicitudes POST a productos
+app.use((req, res, next) => {
+    if (req.method === "POST" && req.path.includes("products")) {
+        console.log("\n🚀 SOLICITUD ENTRANTE:");
+        console.log("  Método:", req.method);
+        console.log("  Ruta:", req.path);
+        console.log("  Headers:", {
+            "content-type": req.get("content-type"),
+            "authorization": req.get("authorization") ? "✅ Presente" : "❌ Falta"
+        });
+    }
+    next();
+});
+
 app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 
 

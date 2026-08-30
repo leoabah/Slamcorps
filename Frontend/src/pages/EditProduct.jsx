@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import productsApi from "../api/productsApi";
 import { toast } from "react-toastify";
 import "@/styles/editProduct.scss";
+import { getImageUrl } from "@/utils/imageUrl";
 
 
 export default function EditProduct() {
@@ -46,7 +47,7 @@ export default function EditProduct() {
           if (product.image[0].startsWith("/uploads/")) {
             setImageType("file");
             // Al ser rutas del servidor, mostramos las miniaturas apuntando al backend
-            setImagePreviews(product.image.map(img => `http://localhost:3000${img}`));
+            setImagePreviews(product.image.map(getImageUrl));
           } else {
             setImageType("url");
             setUrls(product.image);

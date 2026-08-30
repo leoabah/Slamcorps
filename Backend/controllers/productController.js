@@ -1,6 +1,34 @@
 import Product from "../models/Product.js";
 import fs from "fs";
 import path from "path";
+import cloudinary from "../config/cloudinary.js";
+
+const uploadToCloudinary = (file) => new Promise((resolve, reject) => {
+    console.log("🔄 Iniciando upload a Cloudinary para archivo:", file.originalname);
+    
+    const stream = cloudinary.uploader.upload_stream(
+        { folder: "slamcorps/products", resource_type: "image" },
+        (error, result) => {
+            if (error) {
+                console.error("❌ Error en upload_stream:", error);
+                reject(new Error(`Cloudinary error: ${error.message}`));
+            } else {
+                console.log("✅ Response COMPLETO de Cloudinary:", JSON.stringify(result, null, 2));
+                console.log("📸 secure_url extraída:", result.secure_url);
+                console.log("📸 URL type:", typeof result.secure_url);
+                console.log("📸 URL length:", result.secure_url?.length);
+                resolve(result.secure_url);
+            }
+        }
+    );
+
+    stream.on('error', (err) => {
+        console.error("❌ Error en el stream:", err);
+        reject(err);
+    });
+
+    stream.end(file.buffer);
+});
 
 // 🔍 FUNCIÓN AUXILIAR: Borra archivos locales de forma segura
 const deleteLocalFiles = (imagePaths) => {
@@ -48,12 +76,19 @@ export const createProduct = async (req, res) => {
     try {
         const { title, description, price, category, stock, imageURLs } = req.body;
         
+        console.log("📤 Recibido en createProduct:", { title, category, filesCount: req.files?.length, hasImageURLs: !!imageURLs });
+        
         let finalImages = [];
         if (req.files && req.files.length > 0) {
-            finalImages = req.files.map(file => `/uploads/${file.filename}`);
+            console.log("📸 Subiendo archivos a Cloudinary...", req.files.length);
+            finalImages = await Promise.all(req.files.map(uploadToCloudinary));
+            console.log("✅ URLs de Cloudinary recibidas:", finalImages);
         } 
         else if (imageURLs) {
+            console.log("🔗 Usando URLs proporcionadas:", imageURLs);
             finalImages = Array.isArray(imageURLs) ? imageURLs : [imageURLs];
+        } else {
+            console.warn("⚠️ No se encontraron imágenes");
         }
 
         const newProduct = new Product({
@@ -66,10 +101,16 @@ export const createProduct = async (req, res) => {
         });
 
         const savedProduct = await newProduct.save();
+        console.log("💾 Producto guardado:", savedProduct._id);
         return res.status(201).json({ message: "Producto creado con éxito!", product: savedProduct });
 
     } catch (error) {
-        return res.status(500).json({ message: "Error al guardar el producto", error: error.message });
+        console.error("❌ Error en createProduct:", error);
+        return res.status(500).json({ 
+            message: "Error al guardar el producto", 
+            error: error.message,
+            details: error.stack 
+        });
     }
 };
 
@@ -97,7 +138,7 @@ export const updateProduct = async (req, res) => {
         let hasNewImages = false;
 
         if (req.files && req.files.length > 0) {
-            newImages = req.files.map(file => `/uploads/${file.filename}`);
+            newImages = await Promise.all(req.files.map(uploadToCloudinary));
             hasNewImages = true;
         } else if (imageURLs) {
             newImages = Array.isArray(imageURLs) ? imageURLs : [imageURLs];

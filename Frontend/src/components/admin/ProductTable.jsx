@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import{ FaPen, FaTrash, FaPlus } from "react-icons/fa";
+import { getImageUrl } from "@/utils/imageUrl";
 
 
 
@@ -37,7 +38,7 @@ export default function ProductTable({
                         <tr key={product._id}>
                             <td>
                                 <img 
-                                 src={product.image[0]}
+                                 src={getImageUrl(product.image?.[0])}
                                  alt={product.title}
                                  className="table-image"
                                   />

@@ -1,6 +1,7 @@
 import { AuthContext } from "@/context/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
 import { useContext } from "react";
+import { getImageUrl } from "@/utils/imageUrl";
 //import { toast } from "react-hot-toast";
 //import { CartContext } from "@/context/CartContext";
 //import { FaMinus, FaPlus } from "react-icons/fa";
@@ -26,12 +27,7 @@ export default function ProductsCard({
     ? product.image[0]
     : product.image;
 
-  const apiUrl = import.meta.env.VITE_API_URL || "https://slamcorps.onrender.com";
-  const finalImage = imageUrl
-    ? imageUrl.startsWith("/uploads/")
-      ? `${apiUrl}${imageUrl}`
-      : `${import.meta.env.BASE_URL}${imageUrl.replace(/^\//, "")}`
-    : `${import.meta.env.BASE_URL}placeholder.jpg`;
+  const finalImage = getImageUrl(imageUrl);
 
   return (
 
