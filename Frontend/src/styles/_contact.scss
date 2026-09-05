@@ -1,6 +1,6 @@
 
 
-@use "./varabiables/colors" as *;
+@use "./variables/colors" as *;
 .contact-page{
         display: grid;
     grid-template-columns: 1fr 1fr;
@@ -48,7 +48,7 @@
 }
 
 .contact-form input,
-c.contact-form textarea{
+.contact-form textarea{
     padding:.8rem;
     border-radius: 8px;
     border: 1px solid #ccc;

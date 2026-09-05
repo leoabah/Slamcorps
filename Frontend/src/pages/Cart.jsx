@@ -5,6 +5,7 @@ import "@/styles/cart.scss"
 import orderApi from "../api/orderApi.js";
 import { useNavigate } from "react-router-dom"
 import { toast } from "react-hot-toast";
+import { getImageUrl } from "../utils/imageUrl";
 
 export default function Cart(){
 
@@ -34,7 +35,8 @@ export default function Cart(){
 
         const products = cart.map(item =>({
             productId: item._id,
-            quantity: item.quantity
+            quantity: item.quantity,
+            size: item.size
         }));
         
         const response =  await orderApi.post (
@@ -91,13 +93,11 @@ export default function Cart(){
                     className="cart-item"
                     >
                         <img 
-                        src={
+                        src={getImageUrl(
                             Array.isArray(item.image)
-                            ? import.meta.env.BASE_URL +
-                            item.image[0].replace("/","")
-                            : import.meta.env.BASE_URL +
-                            item.image.replace("/","")
-                        }
+                            ? item.image[0]
+                            : item.image
+                        )}
                         />
                         <h3>{item.title}</h3>
                         {item.size && (

@@ -167,6 +167,7 @@ return (
               <label><input type="radio" name="category" value="short" checked={form.category === "short"} onChange={handleChange} /> Short</label>
               <label><input type="radio" name="category" value="pantalon" checked={form.category === "pantalon"} onChange={handleChange} /> Pantalón</label>
               <label><input type="radio" name="category" value="jogging" checked={form.category === "jogging"} onChange={handleChange} /> Jogging</label>
+              <label><input type="radio" name="category" value="gorra" checked={form.category === "gorra"} onChange={handleChange} /> Gorra</label>
             </div>
           </div>
 

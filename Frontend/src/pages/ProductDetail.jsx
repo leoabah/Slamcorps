@@ -86,7 +86,7 @@ const images = Array.isArray(product.image)
 
                 <p className="category">
 
-                    Categoria:{product.category}
+                    Categoria: {product.category}
 
                 </p>
 

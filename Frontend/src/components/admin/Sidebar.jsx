@@ -8,9 +8,7 @@ import {
 
 import "../../styles/admin/_sidebar.scss";
 
-import { Link } from "react-router-dom";
-
-export default function Sidebar(){
+export default function Sidebar({activeTab, setActiveTab}){
 
     return(
         <aside className="sidebar">
@@ -31,14 +29,23 @@ export default function Sidebar(){
 
             <nav>
                 <ul>
-                    <li className="active">
+                    <li className={activeTab === "inicio"?
+                        "active": ""}
+                        onClick={() => setActiveTab("inicio")}
+                        style={{cursor:"pointer"}}
+                    >
 
                         <FaChartPie />
 
                         Dashboard
 
                     </li>
-                    <li>
+                    <li
+                    className={activeTab === "productos" ?
+                        "active" : ""}
+                        onClick={() => setActiveTab("productos")}
+                        style={{cursor:"pointer"}}
+                    >
                         <FaBook />
                         Productos
                     </li>
@@ -46,7 +53,7 @@ export default function Sidebar(){
                         <FaShoppingCart />
                         Pedidos
                     </li>
-                    <li>
+                    <li >
                         <FaUsers />
                         Clientes
                     </li>

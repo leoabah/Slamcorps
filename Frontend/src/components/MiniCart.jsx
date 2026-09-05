@@ -1,6 +1,7 @@
 import { useContext } from "react";
 import { Link } from "react-router-dom";
 import { CartContext} from "@/context/CartContext";
+import { getImageUrl } from "@/utils/imageUrl";
 
 export default function MiniCart() {
 
@@ -26,15 +27,11 @@ export default function MiniCart() {
                       className="mini-cart-item"
                       >
                         <img 
-                        src={!item.image
-                            ? "/placeholder.jpg"
-                            :Array.isArray(item.image)
-                            ? import.meta.env.BASE_URL +
-                            item.image[0].replace("/","")
-                            : import.meta.env.BASE_URL +
-                            item.image.replace("/","")
-                        
-                        }
+                        src={getImageUrl(
+                            Array.isArray(item.image)
+                            ? item.image[0]
+                            : item.image
+                        )}
                         alt={item.title || 
                             "producto"
                         }

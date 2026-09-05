@@ -2,7 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import path from "path";
-
+import contactRoutes from "./routes/contactsRoutes.js";
 import { connectDB} from "./config/db.js";
 import orderRoutes from "./routes/orderRoutes.js"
 import authRoutes from "./routes/authRoutes.js"
@@ -53,6 +53,10 @@ app.use((req, res, next) => {
 
 app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 
+app.use("/api/contacts", contactRoutes);
+app.get("/api/contacts", contactRoutes);
+app.post("/api/contacts", contactRoutes);
+app.patch("/api/contacts/:id/read", contactRoutes);
 
 connectDB();
 
