@@ -15,7 +15,18 @@ export default function ProductTable({
 
             <h2>Productos</h2>
 
-            <Link to="/alta" className="btn-add">
+            <Link to="/alta" 
+            className="btn-add"
+            style={{
+                textDecoration:"none",
+                color:"white",
+                backgroundColor:"#4CAF50",
+                border:"none",
+                padding:"5px",
+                borderRadius:"4px",
+                cursor:"pointer"
+            }}
+            >
                 <FaPlus />
                 Añadir Producto
             </Link>

@@ -137,7 +137,7 @@ export default function AdminDashboard() {
                                     view="inicio"
                                     totalProducts={metrics.totalProducts}
                                     totalOrders={orders.length}
-                                    totalEarning={totalSalesValue}
+                                    totalValue={totalSalesValue}
                                 />
                                 <AnalyticsBox 
                                     sentOrders={metrics.sentOrders}
