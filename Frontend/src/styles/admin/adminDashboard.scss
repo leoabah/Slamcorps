@@ -226,6 +226,82 @@
     margin-top: 8px;
 }
 
+.admin-data-view {
+    animation: fadeIn 0.4s ease-out forwards;
+    width: 100%;
+    background: #0b1426;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 20px;
+    padding: 2rem;
+    color: #fdfbf7;
+}
+
+.admin-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 24px;
+
+    h2 {
+        margin: 0;
+        color: #ffffff;
+        font-size: 1.5rem;
+    }
+
+    span {
+        color: #94a3b8;
+        font-size: 0.9rem;
+    }
+}
+
+.admin-table-container {
+    overflow-x: auto;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+}
+
+.admin-data-table {
+    width: 100%;
+    min-width: 680px;
+    border-collapse: collapse;
+
+    th {
+        background: #171f31;
+        color: #db32ff;
+        font-size: 0.8rem;
+        padding: 16px;
+        text-align: left;
+        text-transform: uppercase;
+    }
+
+    td {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        color: #e2e8f0;
+        padding: 16px;
+        text-align: left;
+        vertical-align: middle;
+    }
+
+    tr:last-child td { border-bottom: 0; }
+
+    strong, small {
+        display: block;
+    }
+
+    small {
+        color: #94a3b8;
+        margin-top: 4px;
+    }
+}
+
+.admin-empty-state {
+    color: #94a3b8;
+    margin: 0;
+    padding: 32px 0;
+    text-align: center;
+}
+
 .products-top {
     display: flex;
     justify-content: space-between;
@@ -333,7 +409,73 @@
 }
 
 // ==========================================
-// 📱 6. Adaptabilidad y Media Queries
+//  6. mensajes y Notificaciones del Sistema
+// ==========================================
+.messages-view {
+    animation: fadeIn 0.4s ease-out forwards;
+    width: 100%;
+
+    .messages-section {
+        background: #0b1426;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 20px;
+        padding: 2rem;
+        color: #fdfbf7;
+
+        h2 { font-size: 1.5rem; margin-bottom: 24px; color: #ffffff; }
+    }
+
+    .messages-list {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .message-item {
+        background: rgba(255, 255, 255, 0.02);
+        border-left: 4px solid #64748b;
+        padding: 20px;
+        border-radius: 0 12px 12px 0;
+        transition: all 0.2s ease;
+
+        &.unread {
+            background: rgba(59, 130, 246, 0.05);
+            border-left-color: #3b82f6; // Resaltado azul para no leídos
+        }
+
+        .message-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+
+            strong { color: #ffffff; font-size: 1.05rem; }
+            span { color: #64748b; font-size: 0.9rem; }
+            small { margin-left: auto; color: #94a3b8; }
+        }
+
+        p { color: #e2e8f0; font-size: 0.95rem; margin: 0 0 12px 0; line-height: 1.5; }
+
+        .btn-read-confirm {
+            background: rgba(59, 130, 246, 0.15);
+            color: #60a5fa;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background 0.2s;
+
+            &:hover { background: #3b82f6; color: #fff; }
+        }
+    }
+}
+
+
+// ==========================================
+// 📱 7. Adaptabilidad y Media Queries
 // ==========================================
 @media (max-width: 1200px) {
     .charts-grid-layout .analytics-box {

@@ -1,14 +1,17 @@
 import { useEffect, useState, useMemo, useCallback } from "react";
 import productsApi from "../api/productsApi";
 import ordersApi from "../api/orderApi"; 
+import contactApi from "../api/contactApi";
 import "../styles/admin/adminDashboard.scss";
 
 import Sidebar from "../components/admin/Sidebar";
 import HeaderAdmin from "../components/admin/HeaderAdmin";
-import ProductTable from "../components/admin/ProductTable";
 import DashboardCards from "../components/admin/DashboardCards";
-import SearchBar from "../components/admin/SearchBar";
 import AnalyticsBox from "../components/admin/AnalyticsBox";
+import ProductsTab from "../components/admin/ProductsTab";
+import OrdersTab from "../components/admin/OrdersTab";
+import ClientsTab from "../components/admin/ClientsTab";
+import MessagesTab from "../components/admin/MessagesTab";
 
 const INITIAL_STATE = {
     activeTab: "inicio",
@@ -26,6 +29,7 @@ export default function AdminDashboard() {
     const [search, setSearch] = useState(INITIAL_STATE.search);
     const [products, setProducts] = useState(INITIAL_STATE.products);
     const [orders, setOrders] = useState(INITIAL_STATE.orders);
+    const [messages, setMessages] = useState(INITIAL_STATE.messages);
     const [totalSalesValue, setTotalSalesValue] = useState(INITIAL_STATE.totalSalesValue);
     const [isLoading, setIsLoading] = useState(INITIAL_STATE.isLoading);
     const [error, setError] = useState(INITIAL_STATE.error);
@@ -38,14 +42,16 @@ export default function AdminDashboard() {
             setIsLoading(true);
             setError(null);
             try {
-                const [productsRes, ordersRes] = await Promise.all([
+                const [productsRes, ordersRes, contactsRes] = await Promise.all([
                     productsApi.get("/"),
-                    ordersApi.get("/").catch(() => ({ data: [] }))
+                    ordersApi.get("/").catch(() => ({ data: [] })),
+                    contactApi.get("/").catch(() => ({ data: [] }))
                 ]);
 
                 if (!controller.signal.aborted) {
                     setProducts(productsRes.data);
                     setOrders(ordersRes.data);
+                    setMessages(contactsRes.data);
                     
                     const total = ordersRes.data.reduce((acc, order) => acc + (order.total || 0), 0);
                     setTotalSalesValue(total);
@@ -78,9 +84,9 @@ export default function AdminDashboard() {
         totalProducts: products.length,
         totalStock: products.reduce((acc, product) => acc + (product.stock || 0), 0),
         totalValue: products.reduce((acc, product) => acc + ((product.price || 0) * (product.stock || 0)), 0),
-        sentOrders: orders.filter(o => o.status === "enviado").length,
-        pendingOrders: orders.filter(o => o.status === "pendiente").length,
-        newClients: orders.filter(o => o.isNew).length
+        sentOrders: orders.filter(o => o.status === "Pagado").length,
+        pendingOrders: orders.filter(o => o.status === "Pendiente").length,
+        newClients: new Set(orders.map(order => order.user?._id).filter(Boolean)).size
     }), [products, orders]);
 
     // Manejador de eliminación de producto
@@ -93,6 +99,17 @@ export default function AdminDashboard() {
         } catch(error) {
             console.error("Error al eliminar producto:", error);
             setError("No se pudo eliminar el producto");
+        }
+    }, []);
+
+    //menssage como leido indiciando el id del mensaje
+    const handleReadMessage = useCallback(async (id) => {
+        try {
+            await contactApi.patch(`/${id}/read`);
+            setMessages(prev => prev.map(msg => msg._id === id ? { ...msg, isRead: true } : msg));
+        } catch (error) {
+            console.error("Error al marcar el mensaje como leído:", error);
+            setError("No se pudo marcar el mensaje como leído");
         }
     }, []);
 
@@ -120,7 +137,7 @@ export default function AdminDashboard() {
                                     view="inicio"
                                     totalProducts={metrics.totalProducts}
                                     totalOrders={orders.length}
-                                    totalValue={totalSalesValue}
+                                    totalEarning={totalSalesValue}
                                 />
                                 <AnalyticsBox 
                                     sentOrders={metrics.sentOrders}
@@ -133,26 +150,20 @@ export default function AdminDashboard() {
 
                         {/* 📦 PESTAÑA 2: PRODUCTOS */}
                         {activeTab === "productos" && (
-                            <div className="products-view">
-                                <DashboardCards
-                                    view="productos"
-                                    totalProducts={metrics.totalProducts}
-                                    totalStock={metrics.totalStock}
-                                    totalValue={metrics.totalValue}
-                                />
-
-                                <div className="products-section">
-                                    <div className="products-top">
-                                        <h2>Productos</h2>
-                                        <SearchBar search={search} setSearch={setSearch} />
-                                    </div>
-
-                                    <ProductTable
-                                       products={filteredProducts}
-                                       handleDelete={handleDelete}
-                                    />
-                                </div>
-                            </div>
+                            <ProductsTab
+                                products={filteredProducts}
+                                search={search}
+                                setSearch={setSearch}
+                                totalProducts={metrics.totalProducts}
+                                totalStock={metrics.totalStock}
+                                totalValue={metrics.totalValue}
+                                handleDelete={handleDelete}
+                            />
+                        )}
+                        {activeTab === "pedidos" && <OrdersTab orders={orders} />}
+                        {activeTab === "clientes" && <ClientsTab orders={orders} />}
+                        {activeTab === "mensajes" && (
+                            <MessagesTab messages={messages} onRead={handleReadMessage} />
                         )}
                     </>
                 )}

@@ -3,6 +3,7 @@ import {
     FaBook,
     FaShoppingCart,
     FaUsers,
+    FaEnvelope,
     FaSignOutAlt
 } from "react-icons/fa";
 
@@ -49,13 +50,29 @@ export default function Sidebar({activeTab, setActiveTab}){
                         <FaBook />
                         Productos
                     </li>
-                    <li>
+                    <li
+                        className={activeTab === "pedidos" ? "active" : ""}
+                        onClick={() => setActiveTab("pedidos")}
+                        style={{cursor:"pointer"}}
+                    >
                         <FaShoppingCart />
                         Pedidos
                     </li>
-                    <li >
+                    <li
+                        className={activeTab === "clientes" ? "active" : ""}
+                        onClick={() => setActiveTab("clientes")}
+                        style={{cursor:"pointer"}}
+                    >
                         <FaUsers />
                         Clientes
+                    </li>
+                    <li
+                        className={activeTab === "mensajes" ? "active" : ""}
+                        onClick={() => setActiveTab("mensajes")}
+                        style={{cursor:"pointer"}}
+                    >
+                        <FaEnvelope />
+                        Mensajes
                     </li>
                 </ul>
 
