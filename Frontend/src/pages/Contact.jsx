@@ -2,6 +2,7 @@
 import { useState} from 'react'
 import { toast } from 'react-hot-toast'
 import imgCont from "@/assets/imgCont.webp";
+import contactApi from "../api/contactApi";
 
 export default function Contact() {
 
@@ -62,7 +63,7 @@ export default function Contact() {
         e.target.value
      );
    };
-   const handleSubmit = (e) =>{
+  const handleSubmit = async (e) =>{
 
      e.preventDefault();
 
@@ -82,15 +83,20 @@ export default function Contact() {
       return;
      }
 
-     toast.success(
-      "Mensage enviado correctamente"
-     );
+     try {
+      await contactApi.post("/", {
+        name: form.name,
+        email: form.email,
+        message: form.comments
+      });
 
-     setForm({
-      name:"",
-      email:"",
-      comments:""
-     });
+      toast.success("Mensaje enviado correctamente");
+      setForm({ name:"", email:"", comments:"" });
+      setErrors({});
+     } catch (error) {
+      console.error("Error al enviar el mensaje:", error);
+      toast.error(error.response?.data?.message || "No se pudo enviar el mensaje");
+     }
    };
 
    return(

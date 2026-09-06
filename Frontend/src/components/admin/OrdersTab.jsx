@@ -2,6 +2,23 @@ function formatDate(date) {
     return date ? new Date(date).toLocaleDateString("es-AR") : "-";
 }
 
+function OrderProducts({ products = [] }) {
+    if (products.length === 0) return <span>-</span>;
+
+    return (
+        <ul className="order-products-list">
+            {products.map((item, index) => (
+                <li key={item.productId?._id || `${item.size}-${index}`}>
+                    <strong>{item.productId?.title || "Producto no disponible"}</strong>
+                    <small>
+                        Talle: {item.size || "-"} | Cantidad: {item.quantity || 0}
+                    </small>
+                </li>
+            ))}
+        </ul>
+    );
+}
+
 export default function OrdersTab({ orders }) {
     return (
         <div className="admin-data-view">
@@ -19,7 +36,7 @@ export default function OrdersTab({ orders }) {
                             <tr>
                                 <th>Cliente</th>
                                 <th>Fecha</th>
-                                <th>Productos</th>
+                                <th>Detalle de productos</th>
                                 <th>Total</th>
                                 <th>Pago</th>
                                 <th>Estado</th>
@@ -33,7 +50,7 @@ export default function OrdersTab({ orders }) {
                                         <small>{order.user?.email || "-"}</small>
                                     </td>
                                     <td>{formatDate(order.createdAt)}</td>
-                                    <td>{order.products?.reduce((total, item) => total + item.quantity, 0) || 0}</td>
+                                    <td><OrderProducts products={order.products} /></td>
                                     <td>${(order.total || 0).toLocaleString("es-AR")}</td>
                                     <td>{order.paymentMethod || "Pendiente"}</td>
                                     <td>{order.status || "Pendiente"}</td>
