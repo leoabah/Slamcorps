@@ -1,7 +1,7 @@
 import { FaBell, FaChevronDown } from "react-icons/fa";
-import"../../styles/admin/_headerAdmin.scss"
+import "../../styles/admin/_headerAdmin.scss";
 
-export default function HearderAdmin(){
+export default function HeaderAdmin({ orderCount = 0, onOrdersClick }){
     return (
         <header className=" admin-header">
             <div className="header-left">
@@ -10,13 +10,18 @@ export default function HearderAdmin(){
             </div>
 
             <div className=" header-right">
-                <button className="notification-btn">
+                <button
+                    className="notification-btn"
+                    type="button"
+                    onClick={onOrdersClick}
+                    aria-label={`Ver ${orderCount} pedidos`}
+                >
                     <FaBell />
-                    <span className="badge">0</span>
+                    <span className="badge">{orderCount}</span>
                 </button>
 
                 <div className="admin-user">
-                    <img src="https:/ui-avatars.com/api/?name=Lionel=Abah&background=4f46e5&color=fff"
+                    <img src="https://ui-avatars.com/api/?name=Lionel%20Abah&background=4f46e5&color=fff"
                      alt="Administrador" />
 
                      <div>

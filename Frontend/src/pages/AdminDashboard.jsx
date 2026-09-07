@@ -118,7 +118,10 @@ export default function AdminDashboard() {
             <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
             
             <main className="admin-content">
-                <HeaderAdmin />
+                <HeaderAdmin
+                    orderCount={orders.length}
+                    onOrdersClick={() => setActiveTab("pedidos")}
+                />
 
                 {error && (
                     <div className="error-message" style={{ padding: "20px", color: "#d32f2f", backgroundColor: "#ffebee", borderRadius: "4px", margin: "20px" }}>
