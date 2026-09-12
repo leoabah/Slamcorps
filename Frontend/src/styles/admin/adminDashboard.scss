@@ -11,10 +11,11 @@
 
 .admin-content {
     flex: 1;
+    min-width: 0;
     padding: 32px;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
+    overflow-x: hidden;
 }
 
 // Mensajes globales de Estado (Cargando / Error)
@@ -64,6 +65,7 @@
         font-weight: 500;
         margin: 0 0 12px 0;
         text-align: left;
+        padding-right: 56px;
     }
 
     span {
@@ -74,6 +76,7 @@
         text-align: left;
         line-height: 1;
         letter-spacing: -0.5px;
+        overflow-wrap: anywhere;
     }
 
     small {
@@ -510,6 +513,29 @@
     
     .admin-content {
         padding: 16px;
+    }
+
+    .admin-card {
+        min-height: 156px;
+        padding: 20px;
+    }
+
+    .admin-card .card-icon {
+        top: 20px;
+        right: 20px;
+    }
+
+    .admin-data-view,
+    .products-section,
+    .messages-view .messages-section {
+        padding: 16px;
+        border-radius: 14px;
+    }
+
+    .admin-section-header {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 8px;
     }
 
     .products-top {

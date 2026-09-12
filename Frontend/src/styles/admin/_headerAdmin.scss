@@ -5,12 +5,14 @@
     flex-wrap: wrap;
     gap: 20px;
     margin-bottom: 35px;
+    min-width: 0;
 }
 
 .header-left h1{
     color:#Fdfbf7;
     font-size: 2rem;
     padding: .5rem;
+    overflow-wrap: anywhere;
 }
 
 .header-left p{
@@ -78,11 +80,13 @@
 
 @media (max-width:768px){
 
-.header-admin{
+.admin-header{
 
     flex-direction:column;
 
     align-items:flex-start;
+
+    gap: 14px;
 
 }
 
@@ -91,6 +95,30 @@
     width:100%;
 
     justify-content:space-between;
+
+    gap: 12px;
+
+}
+
+.header-left,
+.header-right,
+.admin-user {
+    min-width: 0;
+}
+
+.header-left h1 {
+    font-size: 1.5rem;
+}
+
+.admin-user div {
+    min-width: 0;
+}
+
+.admin-user h4,
+.admin-user span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 
 }
 

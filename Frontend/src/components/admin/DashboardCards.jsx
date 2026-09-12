@@ -11,8 +11,7 @@ export default function DashboardCards({
     totalProducts,
     totalStock,
     totalValue,
-    totalOrders = 0,
-    totalEarning = 0
+    totalOrders = 0
 }){
     // 📊 MODO 1: Pestaña de Inicio (Métricas Globales de Ventas)
     if (view === "inicio"){
@@ -27,7 +26,7 @@ export default function DashboardCards({
                         <FaDollarSign />
                     </div>
                     <h3>Ingresos Totales</h3>
-                    <span>${totalEarning.toLocaleString("es-AR")}</span>
+                    <span>${totalValue.toLocaleString("es-AR")}</span>
                     <small>Ventas netas generadas</small>
                 </div>
 

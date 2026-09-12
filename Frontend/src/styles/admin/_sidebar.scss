@@ -1,4 +1,4 @@
-.sibebar{
+.sidebar{
     width: 260px;
     background: #111827;
     border-right: 1px solid rgba(255,255,255,.06);
@@ -16,7 +16,7 @@
     margin-bottom:50px;
 }
 
-.logo-cicle{
+.logo-circle{
     width: 70px;
     height: 70px;
     border-radius: 50px;
@@ -78,7 +78,7 @@
 }
 
 .sidebar .active{
-    background: linear-gardient(
+    background: linear-gradient(
         90deg,
         #4f46e5,
         #6366f1
@@ -104,4 +104,36 @@
 .Logout:hover{
     background:#ef4444;
     color:#fdfdf7;
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        width: 100%;
+        min-height: auto;
+        padding: 16px;
+        position: static;
+    }
+
+    .sidebar-logo {
+        margin-bottom: 20px;
+    }
+
+    .sidebar ul {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+    }
+
+    .sidebar li {
+        justify-content: center;
+        gap: 8px;
+        min-width: 0;
+        padding: 12px 8px;
+        font-size: .9rem;
+    }
+
+    .Logout {
+        width: 100%;
+        margin-top: 20px;
+    }
 }

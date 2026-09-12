@@ -19,10 +19,16 @@ const app = express();
     "https://leoabah.github.io",
     "https://slamcorps.vercel.app",
     ];
-
+    
+ // Rutas de uptimer para mantener el servidor activo en plataformas como Render
 app.get("/ping",(req,res)=>{
     res.status(200).send("pong");
 });
+app.all("/", (req, res) => {
+    res.status(200).send("SlamCorps API is running perfectly!");
+});
+
+
 app.use(cors({
     origin: function(origin,callback){
         if(!origin || allowedOrigins.includes(origin)){
