@@ -2,7 +2,7 @@
 import { useParams ,useNavigate } from "react-router-dom"
 import { useEffect,useState } from "react";
 import { useContext } from "react";
-import { CartContext } from "@/context/CartContext";
+import { CartContext } from "@/context/cartContext.js";
 import { toast } from "react-hot-toast";
 import { FaMinus, FaPlus } from "react-icons/fa";
 import productsApi from "../api/productsApi";

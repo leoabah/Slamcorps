@@ -1,24 +1,15 @@
 //import { Children } from "react";
-import { createContext, useEffect, useState } from "react";
+import { createContext, useState } from "react";
 
-
-export const AuthContext = createContext();
+/* eslint-disable react-refresh/only-export-components */
+export const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
 
-    const [user,setUser]= useState(null);
-
-    useEffect(() => {
-
-        const  savedUser = 
-        localStorage.getItem("user");
-
-        if (savedUser){
-            setUser(
-                JSON.parse(savedUser)
-            );
-        }
-    },[]);
+    const [user, setUser] = useState(() => {
+        const savedUser = localStorage.getItem("user");
+        return savedUser ? JSON.parse(savedUser) : null;
+    });
 
     const login = (userData, token ) =>{
 

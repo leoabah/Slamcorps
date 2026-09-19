@@ -9,7 +9,9 @@ import { CartProvider } from './context/CartContext.jsx'
 import { Toaster } from "react-hot-toast"
 import { AuthProvider } from "./context/AuthContext.jsx"
 import { SearchProvider } from "./context/SearchContext.jsx"
+import { initMercadoPago } from "@mercadopago/sdk-react";
 
+initMercadoPago(import.meta.env.VITE_MERCADOPAGO_PUBLIC_KEY);
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -18,18 +20,17 @@ createRoot(document.getElementById('root')).render(
         import.meta.env.BASE_URL
         }>
     <SearchProvider>
-
-     <CartProvider>
       <AuthProvider>
-       < App />
+        <CartProvider>
+          <App />
+        </CartProvider>
       </AuthProvider>
-       <Toaster
-         position="top-right"
-         toastOptions={{
-           duration: 2500,
-          }} 
-          />
-      </CartProvider>
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          duration: 2500,
+        }}
+      />
     </SearchProvider>
     </BrowserRouter>
   </StrictMode>,

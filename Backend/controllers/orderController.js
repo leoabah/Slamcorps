@@ -1,5 +1,10 @@
 
+import { MercadoPagoConfig, Preference } from "mercadopago";
 import Order from "../models/Order.js"
+
+const client = new MercadoPagoConfig({
+    accessToken: process.env.MERCADOPAGO_ACCESS_TOKEN
+});
 
 export const createOrder = async (
     req,
@@ -12,12 +17,14 @@ export const createOrder = async (
             size: product.size,
             quantity: product.quantity
         }));
+       
+        console.log("ORDEN CREADA:", formattedProducts, order);
 
-        const order =
-        await Order.create({
-            user:req.user.id,
-            products:formattedProducts,
-            total: req.body.total
+        const order = await Order.create({
+            user: req.user.id,
+            products: formattedProducts,
+            total: req.body.total,
+            paymentMethod: req.body.paymentMethod || "mercadopago"
         });
         console.log("ORDER CREADA:", order);
 
@@ -72,4 +79,44 @@ export const getAllOrders = async(
             message:error.message
         });
     }
+};
+
+ export const createMercadoPagoPreference = async (req, res) => {
+  try {
+    const { products, total } = req.body;
+
+    if (!Array.isArray(products) || products.length === 0) {
+      return res.status(400).json({ message: "El carrito está vacío" });
+    }
+
+    const preference = new Preference(client);
+
+    const data = await preference.create({
+      body: {
+        items: products.map((product) => ({
+          title: product.title || product.name || "Producto",
+          quantity: Number(product.quantity || 1),
+          unit_price: Number(product.price || product.unit_price || 0)
+        })),
+        metadata: {
+          total
+        },
+        back_urls: {
+          success: "https://slamcorps.onrender.com/perfil",
+          failure: "https://slamcorps.onrender.com/checkout",
+          pending: "https://slamcorps.onrender.com/checkout"
+        }
+      }
+    });
+
+    return res.status(200).json({
+      preferenceId: data.id
+    });
+  } catch (error) {
+    console.error(error);
+    console.error("ERROR DETALLADO DE MERCADOPAGO:", error.cause || error);
+    return res.status(500).json({
+      message: error.message || "Error al crear la preferencia"
+    });
+  }
 };

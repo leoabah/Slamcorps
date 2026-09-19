@@ -1,0 +1,170 @@
+
+.checkout-page {
+    min-height: 100vh;
+    padding: 2rem 1rem;
+    background: linear-gradient(135deg, #7185da 0%, #1b1e3d 100%);
+    color: #fdfbf7;
+
+    .checkout-shell {
+        max-width: 960px;
+        margin: 0 auto;
+        background-color: rgba(255,255,255,0.94);
+        color: #1b1e3d;
+        border-radius: 16px;
+        padding: 2rem;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+
+    .checkout-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #1b1e3d;
+        margin-bottom: 1.5rem;
+    }
+
+    .checkout-empty {
+        font-size: 1.8rem;
+        text-align: center;
+        color: #1b1e3d;
+    }
+
+    .checkout-products {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .checkout-item {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        border: 1px solid #d8d8d8;
+        border-radius: 12px;
+        padding: 1rem;
+        background-color: #fff;
+    }
+
+    .checkout-image {
+        img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+    }
+
+    .checkout-details {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+
+        .checkout-detail {
+            font-size: 1.2rem;
+            color: #1b1e3d;
+            margin: 0;
+        }
+
+        .checkout-detail-text {
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+        }
+
+        .checkout-size {
+            font-size: 0.85rem;
+            color: #4b5160;
+            margin: 0;
+        }
+
+        p {
+            margin: 0;
+            font-weight: 700;
+            color: #4b5160;
+        }
+    }
+
+    .checkout-quantity {
+        color: #7185da;
+    }
+
+    .checkout-payment {
+        margin-top: 1.5rem;
+        padding: 1rem 0;
+        border-top: 1px solid #d8d8d8;
+
+        h3 {
+            font-size: 1.2rem;
+            color: #1b1e3d;
+            margin-bottom: 0.8rem;
+        }
+
+        .payment-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+
+            label {
+                display: flex;
+                align-items: center;
+                gap: 0.6rem;
+                background-color: #eef1ff;
+                border-radius: 10px;
+                padding: 0.7rem 1rem;
+                font-weight: 700;
+                color: #1b1e3d;
+                cursor: pointer;
+
+                input {
+                    accent-color: #1b1e3d;
+                }
+
+                .mercadopago {
+                    color: #009ee3;
+                }
+            }
+        }
+    }
+
+    .checkout-summary {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-top: 2rem;
+        padding-top: 1rem;
+        border-top: 1px solid #d8d8d8;
+
+        h2 {
+            color: #1b1e3d;
+            margin: 0;
+        }
+    }
+
+    .checkout-button {
+        width: 180px;
+        padding: 0.8rem 1rem;
+        border: none;
+        border-radius: 10px;
+        color: #fdfbf7;
+        background-color: #1b1e3d;
+        font-weight: 700;
+        cursor: pointer;
+
+        &:hover {
+            background-color: #e5c38e;
+            color: #121212;
+        }
+    }
+}
+
+@media (min-width: 738px) and (max-width: 1024px) {
+    .checkout-page {
+        .checkout-details {
+            .checkout-detail {
+                font-size: 1rem;
+            }
+        }
+    }
+}

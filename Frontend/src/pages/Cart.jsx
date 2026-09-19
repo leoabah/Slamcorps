@@ -1,5 +1,5 @@
 import { useContext } from "react"
-import { CartContext } from "../context/CartContext"
+import { CartContext } from "../context/cartContext.js"
 import { FaMinus, FaPlus } from "react-icons/fa";
 import "@/styles/cart.scss"
 import orderApi from "../api/orderApi.js";
@@ -154,7 +154,7 @@ export default function Cart(){
                 </button>
 
                 <button
-                 onClick={handleCheckout}
+                 onClick={() => navigate("/checkout")}
                  
                 >
                     Finalizar Compra
@@ -163,5 +163,5 @@ export default function Cart(){
                 </>
             )}
         </div>
-     )
+     );
 }

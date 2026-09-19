@@ -7,7 +7,7 @@ import { connectDB} from "./config/db.js";
 import orderRoutes from "./routes/orderRoutes.js"
 import authRoutes from "./routes/authRoutes.js"
 import productRoutes from "./routes/productRoutes.js";
-
+import { MercadoPagoConfig, Preference } from "mercadopago";
 
 
 dotenv.config();
@@ -41,7 +41,39 @@ app.use(cors({
     }
 }));
 
+// Intergracion de MercadoPago
+const client = new MercadoPagoConfig({
+    accessToken: process.env.MERCADOPAGO_ACCESS_TOKEN
+});
+
 app.use(express.json());
+
+app.post("/create-preference", async (req, res) => {
+     const preference = new Preference(client);
+
+     try{
+        const data = await preference.create({
+            body: {
+                items:[
+                    {
+                        title: "Producto",
+                        quantity: 1,
+                        unit_price: 2000
+                    }
+                ]
+            }
+        });
+        console.log(data);
+        res.status(200).json({
+            preferenceId: data.id
+        });
+     } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            error: "Error al crear la preferencia de pago"
+        });
+     }
+    });
 
 // 🔍 MIDDLEWARE DE DEBUG: Log de todas las solicitudes POST a productos
 app.use((req, res, next) => {

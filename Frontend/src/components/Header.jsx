@@ -2,7 +2,7 @@
 import { Link } from 'react-router-dom'
 import { FaShoppingCart, FaUser , FaBars, FaTimes} from 'react-icons/fa'
 import { useContext } from "react"
-import { CartContext } from  "@/context/CartContext"
+import { CartContext } from  "@/context/cartContext.js"
 import logoHeader from "@/assets/slam_logo.png"
 import MiniCart from '@/components/MiniCart.jsx'
 import { AuthContext } from '../context/AuthContext'
@@ -12,10 +12,11 @@ import { SearchContext } from '../context/SearchContext'
 
 export default function Header() {
 
-  const {search,setSearch}=useContext(SearchContext);
+  const searchContext = useContext(SearchContext) ?? {};
+  const { search = "", setSearch = () => {} } = searchContext;
 
-
-  const  { totalItems } = useContext(CartContext);
+  const cartContext = useContext(CartContext) ?? {};
+  const { totalItems = 0 } = cartContext;
 
   const [menuOpen, setMenuOpen]= 
   useState(false);

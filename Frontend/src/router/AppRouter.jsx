@@ -11,6 +11,7 @@ import Register from '../pages/Register'
 import Profile  from "../pages/Profile";
 import PrivateRoute from "./PrivateRoute";
 import AdminDashboard from '../pages/AdminDashboard'
+import Checkout from '../pages/Checkout'
 
 
 const AppRouter = () => {
@@ -42,6 +43,11 @@ const AppRouter = () => {
       <Route path="/about" element={<AboutUs />} />
       <Route path="/contact" element={<Contact />} />
       <Route path="/cart" element={<Cart/>} />
+      <Route path="/checkout" element={
+        <PrivateRoute>
+          <Checkout />
+        </PrivateRoute>
+      } />
       <Route path="/login" element={<Login/>} />
       <Route path="/register" element={<Register/>} />
       <Route path="/alta" element={
