@@ -1,10 +1,13 @@
 
 import { MercadoPagoConfig, Preference } from "mercadopago";
 import Order from "../models/Order.js"
+// Importa el cliente de MercadoPago desde el archivo de configuración
+import client from "../config/mp.js"; 
 
-const client = new MercadoPagoConfig({
-    accessToken: process.env.MERCADOPAGO_ACCESS_TOKEN
-});
+
+// const client = new MercadoPagoConfig({
+//     accessToken: process.env.MERCADOPAGO_ACCESS_TOKEN
+// });
 
 export const createOrder = async (
     req,

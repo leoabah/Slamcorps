@@ -13,6 +13,9 @@ import { MercadoPagoConfig, Preference } from "mercadopago";
 dotenv.config();
 
 const app = express();
+
+app.use(express.json());
+
  const allowedOrigins =[
     "http://localhost:5173",
     "http://localhost:5174",
@@ -20,6 +23,18 @@ const app = express();
     "https://slamcorps.vercel.app",
     ];
     
+    app.use(cors({
+        origin: function(origin,callback){
+            if(!origin || allowedOrigins.includes(origin)){
+                callback(null,true);
+            } else{
+                callback(new Error(
+                    "No permitido por CORS")
+                );
+            }
+        }
+    }));
+
  // Rutas de uptimer para mantener el servidor activo en plataformas como Render
 app.get("/ping",(req,res)=>{
     res.status(200).send("pong");
@@ -29,51 +44,12 @@ app.all("/", (req, res) => {
 });
 
 
-app.use(cors({
-    origin: function(origin,callback){
-        if(!origin || allowedOrigins.includes(origin)){
-            callback(null,true);
-        } else{
-            callback(new Error(
-                "No permitido por CORS")
-            );
-        }
-    }
-}));
 
 // Intergracion de MercadoPago
-const client = new MercadoPagoConfig({
-    accessToken: process.env.MERCADOPAGO_ACCESS_TOKEN
-});
+// const client = new MercadoPagoConfig({
+//     accessToken: process.env.MERCADOPAGO_ACCESS_TOKEN
+// });
 
-app.use(express.json());
-
-app.post("/create-preference", async (req, res) => {
-     const preference = new Preference(client);
-
-     try{
-        const data = await preference.create({
-            body: {
-                items:[
-                    {
-                        title: "Producto",
-                        quantity: 1,
-                        unit_price: 2000
-                    }
-                ]
-            }
-        });
-        console.log(data);
-        res.status(200).json({
-            preferenceId: data.id
-        });
-     } catch (error) {
-        console.error(error);
-        res.status(500).json({
-            error: "Error al crear la preferencia de pago"
-        });
-     }
-    });
 
 // 🔍 MIDDLEWARE DE DEBUG: Log de todas las solicitudes POST a productos
 app.use((req, res, next) => {

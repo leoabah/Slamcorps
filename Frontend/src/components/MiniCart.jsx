@@ -11,6 +11,8 @@ export default function MiniCart({ setOpenCart }) {
     removeFromCart,
   } = useContext(CartContext);
 
+  console.log("PRODUCTOS EN EL CARRITO:", cart);
+
   return (
     <div className="mini-cart-overlay">
       <div className="mini-cart-backdrop" onClick={() => setOpenCart?.(false)} />
@@ -49,14 +51,17 @@ export default function MiniCart({ setOpenCart }) {
 
                 <div className="mini-cart-info">
                   <h4>{item.name || item.title}</h4>
+                  {item.size &&  item.size !== "undefined" && (
+                    <p>Tamaño: {item.size}</p>
+                  )}
                   <p>
                     {item.quantity} x ${Number(item.price).toFixed(2)}
                   </p>
 
                   <div className="mini-cart-actions">
-                    <button onClick={() => decreaseQuantity(item._id)}>-</button>
-                    <button onClick={() => increaseQuantity(item._id)}>+</button>
-                    <button onClick={() => removeFromCart(item._id)}>Eliminar</button>
+                    <button onClick={() => decreaseQuantity(item._id, item.size)}>-</button>
+                    <button onClick={() => increaseQuantity(item._id, item.size)}>+</button>
+                    <button onClick={() => removeFromCart(item._id, item.size)}>Eliminar</button>
                   </div>
                 </div>
               </div>
