@@ -80,6 +80,7 @@ function Checkout() {
               <p><strong>Monto a transferir:</strong> \${totalPrice}</p>
             </div>
             <p className="bank-note">💡 Envía el comprobante de pago por WhatsApp o Correo. Una vez verificado, aprobaremos tu pedido</p>
+            <br/>
             <button className="checkout-button" onClick={() => navigate("/perfil")}>Ver mis pedidos</button>
           </div>
         ) : (
