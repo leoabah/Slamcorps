@@ -1,4 +1,3 @@
-
 import { Wallet } from "@mercadopago/sdk-react";
 import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -13,6 +12,7 @@ function Checkout() {
   const [paymentMethod, setPaymentMethod] = useState("mercadopago");
   const [preferenceId, setPreferenceId] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [bankDetails, setBankDetails] = useState(null);
 
   const handleCheckout = async () => {
     if (cart.length === 0) {
@@ -27,57 +27,36 @@ function Checkout() {
       return;
     }
 
-    if (paymentMethod === "mercadopago") {
-      setLoading(true);
-
-      try {
-        const response = await orderApi.post(
-          "/create-preference",
-          {
-            products: cart.map(item => ({
-              productId: item._id,
-              title: item.title,
-              quantity: item.quantity,
-              price: item.price,
-              size: item.size || "default"
-            })),
-            total: totalPrice
-          }
-        );
-
-        setPreferenceId(response.data.preferenceId);
-      } catch (error) {
-        console.error(error);
-        toast.error(error.response?.data?.message || "Error al crear la preferencia de pago");
-      } finally {
-        setLoading(false);
-      }
-
-      return;
-    }
+    setLoading(true);
 
     try {
-      const products = cart.map(item => ({
-        productId: item._id,
-        quantity: item.quantity,
-        size: item.size || "default"
-      }));
+      // Petición UNIFICADA hacia tu backend (Pasa por tu nuevo controlador bifurcado)
+      const response = await orderApi.post("/", {
+        products: cart.map(item => ({  
+          productId: item._id,
+          title: item.title,
+          quantity: item.quantity,
+          price: item.price,
+          size: item.size || "default"
+        })),
+        total: totalPrice,
+        paymentMethod: paymentMethod // "mercadopago" o "transferencia"
+      });
 
-      const response = await orderApi.post(
-        "/",
-        {
-          products,
-          total: totalPrice,
-          paymentMethod
-        }
-      );
-
-      toast.success(response.data.message || "Compra realizada correctamente");
-      clearCart();
-      navigate("/perfil");
+      if (paymentMethod === "mercadopago" && response.data.preferenceId) {
+        setPreferenceId(response.data.preferenceId);
+        toast.success("Orden creada. Proceda al pago en el botón de Mercado Pago.");
+      } 
+      else if (paymentMethod === "transferencia") {
+        setBankDetails(response.data.bankData);
+        toast.success("¡Pedido registrado! Realice la transferencia.");
+        clearCart(); // Limpiamos el carrito local ya que la orden quedó en la BD
+      } 
     } catch (error) {
       console.error(error);
-      toast.error(error.response?.data?.message || "Error al finalizar la compra");
+      toast.error(error.response?.data?.message || "Error al procesar la solicitud");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -86,9 +65,27 @@ function Checkout() {
       <div className="checkout-shell">
         <h1 className="checkout-title">Checkout</h1>
 
-        {cart.length === 0 ? (
+        {/* 1. Si el carrito está vacío Y no se generaron datos de transferencia bancaria */}
+        {cart.length === 0 && !bankDetails ? (
           <p className="checkout-empty">Tu carrito está vacío.</p>
+        ) : bankDetails ? (
+          /* 2. Si eligió transferencia bancaria y ya se registró la orden en la BD */
+          <div className="bank-transfer-success">
+            <h2>🎉 ¡Pedido Recibido!</h2>
+            <p>Tu orden ha sido registrada con éxito en estado <strong>Pendiente</strong>.</p>
+            <p>Para completar tu compra, realiza la transferencia al siguiente CBU:</p>
+            <div className="bank-card">
+              <p><strong>Titular:</strong> {bankDetails.titular}</p>
+              <p><strong>Banco:</strong> {bankDetails.banco}</p>
+              <p><strong>CBU:</strong> {bankDetails.cbu}</p> {/* 🟢 Corregido 'bbu' */}
+              <p><strong>Alias:</strong> {bankDetails.alias}</p>
+              <p><strong>Monto a transferir:</strong> \${totalPrice}</p>
+            </div>
+            <p className="bank-note">💡 Envía el comprobante de pago por WhatsApp o Correo. Una vez verificado, aprobaremos tu pedido desde el Dashboard.</p>
+            <button className="checkout-button" onClick={() => navigate("/perfil")}>Ver mis pedidos</button>
+          </div>
         ) : (
+          /* 3. Flujo común del carrito de compras listo para pagar */
           <>
             <div className="checkout-products">
               {cart.map(item => (
@@ -106,7 +103,7 @@ function Checkout() {
                       {item.size && <p className="checkout-size">Talle: {item.size}</p>}
                     </div>
                     <p className="checkout-quantity">X{item.quantity}</p>
-                    <p className="checkout-price">${item.price}</p>
+                    <p className="checkout-price">\${item.price}</p>
                   </div>
                 </div>
               ))}
@@ -121,6 +118,7 @@ function Checkout() {
                     name="paymentMethod"
                     value="mercadopago"
                     checked={paymentMethod === "mercadopago"}
+                    disabled={preferenceId} // Deshabilitado si el botón de MP ya está activo
                     onChange={(e) => setPaymentMethod(e.target.value)}
                   />
                   <span className="mercadopago">Mercado Pago</span>
@@ -132,25 +130,30 @@ function Checkout() {
                     name="paymentMethod"
                     value="transferencia"
                     checked={paymentMethod === "transferencia"}
+                    disabled={preferenceId} // Deshabilitado si el botón de MP ya está activo
                     onChange={(e) => setPaymentMethod(e.target.value)}
                   />
                   <span>Transferencia</span>
                 </label>
               </div>
 
+              {/* Botón interactivo de Mercado Pago */}
               {paymentMethod === "mercadopago" && preferenceId && (
                 <div className="checkout-wallet">
-                  <Wallet initialization={{ preferenceId }} />
+                  <Wallet initialization={{ preferenceId }} onReady={() => clearCart()} />
                 </div>
               )}
             </div>
 
-            <div className="checkout-summary">
-              <h2>Total: ${totalPrice}</h2>
-              <button className="checkout-button" onClick={handleCheckout} disabled={loading}>
-                {loading ? "Procesando..." : "Confirmar compra"}
-              </button>
-            </div>
+            {/* Ocultamos el resumen si el botón de Mercado Pago ya se generó en pantalla */}
+            {!preferenceId && (
+              <div className="checkout-summary">
+                <h2>Total: \${totalPrice}</h2>
+                <button className="checkout-button" onClick={handleCheckout} disabled={loading}>
+                  {loading ? "Procesando..." : "Confirmar compra"}
+                </button>
+              </div>
+            )}
           </>
         )}
       </div>
@@ -158,4 +161,4 @@ function Checkout() {
   );
 }
 
-export default Checkout
+export default Checkout;

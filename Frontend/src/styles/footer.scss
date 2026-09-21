@@ -1,12 +1,78 @@
 @use "./variables/colors" as *;
 
-.footer-container{
-    background-color: #1B1e3d;
-    color: #fdfbf7;
-    padding: 1rem;
+.footer-container {
+  background-color: #1B1e3d;
+  color: #fdfbf7;
+  padding: 2rem 1rem 1rem;
+  font-family: sans-serif;
 
-}
-a{
+  .footer-content {
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+    margin-bottom: 1.5rem;
+
+    h3 {
+      font-size: 1.2rem;
+      margin-bottom: 1rem;
+      letter-spacing: 1px;
+      color: #e2d9c2;
+    }
+
+    .contact-info {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1.5rem;
+      font-size: 0.95rem;
+      
+
+      p {
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+
+        span {
+          font-weight: bold;
+          color: #e2d9c2;
+        }
+      }
+
+      .icon {
+        color: #e2d9c2;
+        font-size: 1.1rem;
+
+        &.whatsapp {
+          color: #25d366; // Color representativo de WhatsApp
+        }
+      }
+    }
+  }
+
+  .footer-bottom {
+    text-align: center;
+    border-top: 1px solid rgba(253, 251, 247, 0.2);
+    padding-top: 1rem;
+    font-size: 0.9rem;
+
+    .author-link {
+      color: #fdfbf7;
+      text-decoration: none;
+      
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  a {
     text-decoration: none;
     color: #fdfbf7;
+    transition: color 0.2s;
+
+    &:hover {
+      color: #e2d9c2;
+    }
+  }
 }

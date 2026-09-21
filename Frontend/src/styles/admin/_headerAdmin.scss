@@ -123,3 +123,77 @@
 }
 
 }
+
+/* 
+   📱 TABLET MEDIA QUERY (Máximo 1024px)
+*/
+
+@media (max-width: 1024px) {
+    .admin-header {
+        gap: 15px;
+        margin-bottom: 25px;
+    }
+
+    .header-left h1 {
+        font-size: 1.75rem;
+    }
+
+    .admin-user img {
+        width: 46px;
+        height: 46px;
+    }
+}
+
+/* 
+   📱 MOBILE MEDIA QUERY (Máximo 768px)
+*/
+@media (max-width: 768px) {
+    .admin-header {
+        flex-direction: column;
+        align-items: stretch; /* Estira los bloques para ocupar el ancho total */
+        gap: 20px;
+        margin-bottom: 20px;
+    }
+
+    .header-left {
+        text-align: left;
+        width: 100%;
+    }
+
+    .header-left h1 {
+        font-size: 1.4rem;
+        padding: 0; /* Limpia paddings para ganar espacio lineal */
+    }
+
+    .header-right {
+        width: 100%;
+        justify-content: space-between; /* Alinea notificaciones a la izquierda y user a la derecha */
+        flex-direction: row-reverse; /* Opcional: invierte el orden si deseas el usuario primero */
+        gap: 15px;
+    }
+
+    .admin-user {
+        gap: 8px;
+        max-width: 70%; /* Evita que nombres largos empujen el botón de notificación */
+    }
+
+    .admin-user img {
+        width: 40px;
+        height: 40px;
+    }
+
+    /* Contenedor de textos del usuario (h4 y span) */
+    .admin-user div {
+        min-width: 0;
+        flex: 1;
+    }
+
+    .admin-user h4,
+    .admin-user span {
+        display: block;
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+}

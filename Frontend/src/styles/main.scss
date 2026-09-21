@@ -117,15 +117,13 @@ h1,h2,h3 {
   height: 2.4rem;
   width: 17rem;
   padding: 0.6rem 0.2rem;
-  border-top-left-radius: 12px;
-  border-bottom-left-radius: 12px;
+  border-radius:   12px 0 0 12px  ;
   border: none;
 }
 .search button{
   align-items: center;
   border: none;
-  border-top-right-radius:12px;
-  border-bottom-right-radius:12px;
+  border-radius: 0 12px 12px 0 ;
   padding: 0.7rem;
   width: 3rem;
   background-color: #fae7d3;

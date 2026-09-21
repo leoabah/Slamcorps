@@ -1,4 +1,6 @@
- import express from "express";
+
+import express from "express";
+import { receiveWebhook } from "../controllers/orderController.js";
 
  import {
     createOrder,
@@ -12,6 +14,11 @@
  import adminMiddleware from "../middleware/adminMiddleware.js";
  
  const router = express.Router();
+
+ router.post(
+    "/webhook",
+    receiveWebhook
+ );
 
  router.post(
     "/",

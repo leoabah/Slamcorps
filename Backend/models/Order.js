@@ -40,7 +40,8 @@ status :{
 
 paymentMethod:{
     type:String,
-    default:"pendiente"
+    enum:["mercadopago","transferencia","efectivo"],
+    default:"mercadopago"
 }
 },
  {
@@ -51,6 +52,7 @@ paymentMethod:{
 export default mongoose.model(
     "Order",
     orderSchema
-);
+)
+;
 
 
