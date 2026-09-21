@@ -280,7 +280,8 @@ button {
   }
   .cart-item{
     border: 1px solid #ddd;
-    font-size: 1rem;
+    font-size: 0.8rem;
+    flex-wrap: wrap;
   }
   .search{
     display: flex
