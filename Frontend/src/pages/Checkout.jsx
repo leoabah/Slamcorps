@@ -85,6 +85,25 @@ function Checkout() {
           </div>
         ) : (
           <>
+          {/* 🟢 BOTÓN VOLVER (Visible arriba cuando el botón de Mercado Pago está activo para poder cancelar) */}
+            {preferenceId && (
+              <button 
+                className="checkout-cancel-back-btn"
+                onClick={() => navigate("/cart")}
+                style={{
+                  background: "#7185da",
+                  color: "#f1f4f7",
+                  border: "1px solid rgba(255, 255, 255, 0.1)",
+                  padding: "8px 16px",
+                  borderRadius: "8px",
+                  cursor: "pointer",
+                  marginBottom: "20px",
+                  fontWeight: "500"
+                }}
+              >
+                ←  Cancelar 
+              </button>
+            )}
             {/* 🟢 No renderizar la lista si el carrito ya se limpió, pero mantener la estructura viva */}
             {cart.length > 0 && (
               <div className="checkout-products">
@@ -103,7 +122,7 @@ function Checkout() {
                         {item.size && <p className="checkout-size">Talle: {item.size}</p>}
                       </div>
                       <p className="checkout-quantity">X{item.quantity}</p>
-                      <p className="checkout-price">\${item.price}</p>
+                      <p className="checkout-price">${item.price}</p>
                     </div>
                   </div>
                 ))}
@@ -156,7 +175,7 @@ function Checkout() {
 
             {!preferenceId && (
               <div className="checkout-summary">
-                <h2>Total: \${totalPrice}</h2>
+                <h2>Total: ${totalPrice}</h2>
                 <button className="checkout-button" onClick={handleCheckout} disabled={loading}>
                   {loading ? "Procesando..." : "Confirmar compra"}
                 </button>
