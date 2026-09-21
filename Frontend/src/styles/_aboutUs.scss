@@ -1,62 +1,298 @@
-@use "./variables/colors" as *;
+$bg-main: #4A5A9E;
+$bg-card: #1B1e3d;
+$accent-amber: #f59e0b;
+$accent-amber-light: #fcd34d;
+$text-light: #fdfbf7;
+$text-muted: #e2d9c2;
+$border-color: rgba(245, 158, 11, 0.3);
 
-.about-page{
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 20px;
-  padding: 1rem;
-  
-  h1,h2{
-     
-      text-align: center;
-      margin-bottom: 20px;
-      background: linear-gradient(
-          90deg, 
-          #f28b71,
-          #feb47b);
-          border-radius: 8px;
-          padding: 10px 20px;
-          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-          
-        }
+.slam-nosotros-container {
+  background-color: $bg-main;
+  color: $text-light;
+  min-height: 100vh;
+  padding: 2rem 1rem 4rem;
+  font-family: sans-serif;
+
+  .nosotros-hero {
+    background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 50%, #d97706 100%);
+    border-radius: 1rem;
+    padding: 2.5rem 1.5rem;
+    text-align: center;
+    max-width: 900px;
+    margin: 0 auto 2.5rem;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+    position: relative;
+    overflow: hidden;
+
+    h1 {
+      color: #090a16;
+      font-size: 2.2rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: -0.025em;
+      margin: 0 0 0.5rem 0;
+
+      @media (min-width: 768px) {
+        font-size: 3rem;
+      }
     }
-.about-content  ul{
+
+    p {
+      color: #1e1b4b;
+      font-weight: 600;
+      font-size: 0.95rem;
+      margin: 0;
+
+      @media (min-width: 768px) {
+        font-size: 1.1rem;
+      }
+    }
+  }
+
+  .nosotros-content-wrapper {
+    max-width: 900px;
+    margin: 0 auto;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: 20px;
-    max-width: 800px;
-    margin: 0 auto;
-    text-decoration: none;
-}
+    gap: 2rem;
+  }
 
-.about-content p{
-    
-    font-size: 1.2rem;
-    line-height: 1.6;
-    width: 560px;
+  .nosotros-card {
+    background-color: $bg-card;
+    border: 1px solid $border-color;
+    border-radius: 1rem;
+    padding: 2rem;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    position: relative;
+
+    &.digital-statement {
+      text-align: left;
+      
+      .badge-digital {
+        position: absolute;
+        top: 0;
+        right: 2rem;
+        transform: translateY(-50%);
+        background-color: $accent-amber;
+        color: #090a16;
+        font-weight: bold;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        padding: 0.35rem 1rem;
+        border-radius: 9999px;
+        letter-spacing: 0.05em;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      }
+
+      h2 {
+        color: $accent-amber-light;
+        font-size: 1.5rem;
+        margin-top: 0;
+        margin-bottom: 1rem;
+      }
+
+      p {
+        color: $text-muted;
+        line-height: 1.7;
+        font-size: 1rem;
+        margin: 0;
+
+        .highlight-text {
+          color: $accent-amber-light;
+          font-weight: bold;
+          text-decoration: underline;
+          text-decoration-color: rgba(252, 211, 77, 0.4);
+        }
+      }
+    }
+
+    &.history-section {
+      text-align: center;
+
+      .section-tag {
+        display: inline-block;
+        padding: 0.25rem 0.85rem;
+        border-radius: 9999px;
+        background-color: rgba(245, 158, 11, 0.1);
+        border: 1px solid rgba(245, 158, 11, 0.2);
+        color: $accent-amber-light;
+        font-size: 0.75rem;
+        font-weight: bold;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 0.75rem;
+      }
+
+      h3 {
+        font-size: 1.5rem;
+        color: $text-light;
+        margin-top: 0;
+        margin-bottom: 2rem;
+      }
+
+      .history-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+
+        @media (min-width: 768px) {
+          grid-template-columns: repeat(3, 1fr);
+        }
+
+        .history-step {
+          background-color: $bg-main;
+          border: 1px solid rgba(255, 255, 255, 0.08);
+          border-radius: 0.75rem;
+          padding: 1.5rem 1rem;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          text-align: center;
+
+          .step-icon {
+            width: 3rem;
+            height: 3rem;
+            border-radius: 50%;
+            background-color: rgba(245, 158, 11, 0.1);
+            color: $accent-amber;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+          }
+
+          h4 {
+            color: $accent-amber-light;
+            font-size: 1rem;
+            margin: 0 0 0.5rem 0;
+          }
+
+          p {
+            color: $text-muted;
+            font-size: 0.85rem;
+            line-height: 1.5;
+            margin: 0;
+          }
+        }
+      }
+    }
+  }
+
+  .founders-section {
     text-align: center;
-}
-.gallery-section{
-    display: block;
-    flex-wrap: wrap;
-    justify-content: center;
+    margin-top: 1rem;
 
+    .section-tag {
+      display: inline-block;
+      padding: 0.25rem 0.85rem;
+      border-radius: 9999px;
+      background-color: rgba(245, 158, 11, 0.1);
+      border: 1px solid rgba(245, 158, 11, 0.2);
+      color: $accent-amber-light;
+      font-size: 0.75rem;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.75rem;
+    }
 
-    // p{
-    //     margin-bottom: 20px;
-    //     text-align: center;
-    //     width: 100%;
-    // }
-}
+    h3 {
+      font-size: 1.5rem;
+      color: $text-light;
+      margin: 0 0 0.5rem 0;
+    }
 
-.gallery {
-    display: grid;
-    gap: 20px;
-   grid-template-columns: 2fr 2fr ;
-  
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease;
+    .founders-subtitle {
+      color: $text-muted;
+      font-size: 0.9rem;
+      max-width: 600px;
+      margin: 0 auto 2rem;
+    }
+
+    .founders-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+
+      @media (min-width: 768px) {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .founder-card {
+        background-color: $bg-card;
+        border: 1px solid $border-color;
+        border-radius: 1rem;
+        padding: 1.75rem;
+        text-align: left;
+        position: relative;
+        overflow: hidden;
+        transition: border-color 0.2s ease;
+
+        &:hover {
+          border-color: rgba(245, 158, 11, 0.6);
+        }
+
+        .founder-badge {
+          position: absolute;
+          top: 0;
+          right: 0;
+          background-color: rgba(245, 158, 11, 0.15);
+          color: $accent-amber-light;
+          border-left: 1px solid rgba(245, 158, 11, 0.2);
+          border-bottom: 1px solid rgba(245, 158, 11, 0.2);
+          padding: 0.3rem 0.8rem;
+          border-bottom-left-radius: 0.75rem;
+          font-size: 0.65rem;
+          font-weight: bold;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+        }
+
+        .founder-header {
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+          margin-bottom: 1rem;
+
+          .founder-avatar {
+            width: 3.5rem;
+            height: 3.5rem;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #f59e0b 0%, #fcd34d 100%);
+            color: #090a16;
+            font-weight: 900;
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+          }
+
+          h4 {
+            color: $text-light;
+            font-size: 1.15rem;
+            margin: 0 0 0.25rem 0;
+          }
+
+          .founder-role {
+            color: $accent-amber;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+          }
+        }
+
+        p {
+          color: $text-muted;
+          font-size: 0.85rem;
+          line-height: 1.6;
+          margin: 0;
+        }
+      }
+    }
+  }
 }

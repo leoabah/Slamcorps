@@ -1,68 +1,98 @@
-// import React from 'react';
-// import Lc_caja from  "@/assets/Lc_caja.png";
-// import Lc_estante from "@/assets/Lc_estante.png";
-// import Lc_shopping from "@/assets/Lc_shopping.png";
-// import Lc_team from "@/assets/Lc_team.png";
-// import Lc_space from "@/assets/Lc_space.png"
-import "@/styles/_aboutUs.scss";
 
-const AboutUs = () => {
+import {  FaGlobeAmericas, FaAward, FaRocket, FaMapMarkerAlt } from 'react-icons/fa';
+import '@/styles/_aboutUs.scss';
 
-  
-
+const Nosotros = () => {
   return (
-  <section 
-  className='about-page'
-  >
-      <div className='about-hero'>
+    <div className="slam-nosotros-container">
+      
+      {/* Page Header Banner */}
+      <div className="nosotros-hero">
         <h1>Sobre Nosotros</h1>
-        <p>
-          Bienvenido en Libreria Cosmica , un espacio creado para 
-          los amantes de la lectura. Nuestra misión es ofrecer una amplia selección de mangas, comics y novelas, junto con un ambiente acogedor para que puedas disfrutar de tu pasión por la lectura. En Libreria Cosmica, creemos que cada libro es una puerta a nuevos mundos y aventuras, y estamos aquí para ayudarte a descubrirlos.
-        </p>
-      </div> 
-      <div className='about-content'>
-        <h2>Nuestra Historia</h2>
-        <p>
-          Fundada en 2020, Libreria Cosmica nació de la pasión por la lectura y el deseo de crear un espacio donde los amantes de los libros pudieran reunirse. Desde nuestros inicios, hemos trabajado arduamente para ofrecer una selección diversa de títulos y crear un ambiente acogedor para nuestros clientes.
-        </p>
+        <p>Conoce la historia, el esfuerzo y la visión detrás de SLAM Corps.</p>
+      </div>
 
-      <h2>Que ofrecemos</h2>
-      <ul>
-        <li>Mangas de las series mas populares.</li>
-        <li>Comics de editoriales reconocidas.</li>
-        <li>Novelas y  literatura fantástica.</li>
-        <li>Compras simples y seguras</li>
-      </ul>
+      <div className="nosotros-content-wrapper">
+        
+        {/* Section 1: Digital Model Statement */}
+        <section className="nosotros-card digital-statement">
+          <div className="badge-digital">100% Digital</div>
+          <h2>Nuestra Esencia y Modalidad</h2>
+          <p>
+            En <strong>SLAM Corps</strong> nos dedicamos a ofrecer productos excepcionales respaldados por una logística de primer nivel. Es importante destacar que <span className="highlight-text">no poseemos local o dirección física de atención al público</span>; operamos de manera íntegramente digital para optimizar procesos y llevar nuestros productos de forma directa y segura a cada rincón del país.
+          </p>
+        </section>
 
-      </div> 
-    <div
-    className='gallery-section'
-    >
-      <h2>
-        Nuestro Local 
-      </h2>
+        {/* Section 2: History (5 Years + Word of Mouth + Digital Evolution) */}
+        <section className="nosotros-card history-section">
+          <div className="section-tag">Nuestra Historia</div>
+          <h3>De una idea entre amigos a la plataforma actual</h3>
+          
+          <div className="history-grid">
+            <div className="history-step">
+              <div className="step-icon"><FaRocket /></div>
+              <h4>Hace 5 Años</h4>
+              <p>Iniciamos este camino como una idea entre amigos, creciendo paso a paso gracias a la recomendación de boca en boca.</p>
+            </div>
 
-      <p>
-        Te invitamos a visitar nuestra espacio , donde encontraras
-        mangas ,comics ,novelas y un ambiente pensado para vos.
-      </p>
-      <br />
-      <div className='gallery'>
+            <div className="history-step">
+              <div className="step-icon"><FaMapMarkerAlt /></div>
+              <h4>Sin Local Físico</h4>
+              <p>Construimos la confianza de nuestros clientes sin necesidad de un punto presencial, priorizando cercanía virtual y envíos seguros.</p>
+            </div>
 
-      {/* <img src={Lc_shopping} alt="vista de frente del local" />
+            <div className="history-step">
+              <div className="step-icon"><FaGlobeAmericas /></div>
+              <h4>Sitio Web Propio</h4>
+              <p>Hoy consolidamos este crecimiento con nuestro propio sitio web, optimizando la experiencia digital para todos ustedes.</p>
+            </div>
+          </div>
+        </section>
 
-      <img src={Lc_team} alt="nuestro equipo " />
+        {/* Section 3: Founders (Serge Minkoe & Lionel Abah) */}
+        <section className="founders-section">
+          <div className="section-tag">Liderazgo</div>
+          <h3>Fundadores y Trayectoria</h3>
+          <p className="founders-subtitle">Más de 10 años radicado en Argentina, con profundas raíces camerunesas y nacionalidad argentina adoptada.</p>
 
-      <img src={Lc_space} alt="espacio de lectura" />
+          <div className="founders-grid">
+            
+            {/* Founder 1 */}
+            <div className="founder-card">
+              <div className="founder-badge">Fundador</div>
+              <div className="founder-header">
+                <div className="founder-avatar">SM</div>
+                <div>
+                  <h4>Serge Minkoe</h4>
+                  <span className="founder-role"><FaAward /> Ex-futbolista & Argentino Nacionalizado</span>
+                </div>
+              </div>
+              <p>
+                Oriundo de Camerún. Tras una destacada trayectoria en las canchas de fútbol profesional, lleva más de 10 años radicado en Argentina. Su disciplina, espíritu de equipo y perseverancia sentaron las bases fundacionales de SLAM Corps.
+              </p>
+            </div>
 
-      <img src={Lc_estante} alt="encuentra  en nuestra pacillos tu  gusto" />
+            {/* Founder 2 */}
+            <div className="founder-card">
+              <div className="founder-badge">Cofundador</div>
+              <div className="founder-header">
+                <div className="founder-avatar">LA</div>
+                <div>
+                  <h4>Lionel Abah</h4>
+                  <span className="founder-role"><FaAward /> Ex-futbolista & Argentino Nacionalizado</span>
+                </div>
+              </div>
+              <p>
+                Socio y pilar fundamental del proyecto. Al igual que Serge, su pasado como ex-futbolista le inculcó el valor de la resiliencia y el compromiso absoluto con la excelencia en cada entrega que realizamos.
+              </p>
+            </div>
 
-      <img src={Lc_caja} alt="abonar tu compras" /> */}
+          </div>
+        </section>
+
       </div>
     </div>
-  </section>
-  )
-}
+  );
+};
 
-export default AboutUs
+export default Nosotros;
