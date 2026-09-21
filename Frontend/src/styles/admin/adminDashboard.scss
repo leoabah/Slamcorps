@@ -298,6 +298,85 @@
     }
 }
 
+// ==========================================
+// 🎨 5. Selectores de Estado e Insignias (OrdersTab)
+// ==========================================
+.admin-status-select {
+    font-size: 0.85rem;
+    outline: none;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+
+    // Estilos globales de las opciones de la lista desplegable
+    option {
+        background-color: #171f31;
+        color: #fdfbf7;
+        padding: 8px;
+    }
+
+    // Variaciones dinámicas según la clase del estado seleccionado
+    &.pendiente {
+        border-color: rgba(234, 179, 8, 0.4) !important;
+        background-color: rgba(234, 179, 8, 0.15) !important;
+        color: #f1c40f !important;
+
+        &:hover, &:focus {
+            background-color: rgba(234, 179, 8, 0.25) !important;
+            box-shadow: 0 0 10px rgba(234, 179, 8, 0.2);
+        }
+    }
+
+    &.pagado, &.aprobado {
+        border-color: rgba(34, 197, 94, 0.4) !important;
+        background-color: rgba(34, 197, 94, 0.15) !important;
+        color: #2ecc71 !important;
+
+        &:hover, &:focus {
+            background-color: rgba(34, 197, 94, 0.25) !important;
+            box-shadow: 0 0 10px rgba(34, 197, 94, 0.2);
+        }
+    }
+
+    &.cancelado {
+        border-color: rgba(239, 68, 68, 0.4) !important;
+        background-color: rgba(239, 68, 68, 0.15) !important;
+        color: #e74c3c !important;
+
+        &:hover, &:focus {
+            background-color: rgba(239, 68, 68, 0.25) !important;
+            box-shadow: 0 0 10px rgba(239, 68, 68, 0.2);
+        }
+    }
+}
+
+// Estilos estáticos de lectura para los registros de Mercado Pago
+.admin-status-badge {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    border: 1px solid transparent;
+
+    &.pendiente {
+        border-color: rgba(234, 179, 8, 0.2);
+        background-color: rgba(234, 179, 8, 0.1);
+        color: #f1c40f;
+    }
+
+    &.pagado, &.aprobado {
+        border-color: rgba(34, 197, 94, 0.2);
+        background-color: rgba(34, 197, 94, 0.1);
+        color: #2ecc71;
+    }
+
+    &.cancelado {
+        border-color: rgba(239, 68, 68, 0.2);
+        background-color: rgba(239, 68, 68, 0.1);
+        color: #e74c3c;
+    }
+}
+
+
 .order-products-list {
     list-style: none;
     margin: 0;

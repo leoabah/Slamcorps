@@ -20,9 +20,9 @@ export default function Sidebar({activeTab, setActiveTab}){
                     
                 </div>
 
-                <h2>Libreria</h2>
+                <h2>Slam</h2>
 
-                <span>Cosmica</span>
+                <span>Corps</span>
 
                 <small>ADMIN</small>
 

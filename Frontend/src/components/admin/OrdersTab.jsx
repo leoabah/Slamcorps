@@ -1,3 +1,7 @@
+import { useState } from "react";
+import { toast } from "react-hot-toast";
+import orderApi from "../../api/orderApi"; // Asegúrate de que esta sea la ruta real a tu Axios
+
 function formatDate(date) {
     return date ? new Date(date).toLocaleDateString("es-AR") : "-";
 }
@@ -19,7 +23,30 @@ function OrderProducts({ products = [] }) {
     );
 }
 
-export default function OrdersTab({ orders }) {
+export default function OrdersTab({ orders: initialOrders }) {
+    // Estado local reactivo para ver los cambios inmediatamente sin recargar
+    const [orders, setOrders] = useState(initialOrders);
+
+
+    const handleStatusChange = async (orderId, newStatus) => {
+        try {
+            // Petición PUT al backend para guardar en la Base de Datos
+            await orderApi.put(`/${orderId}/status`, { status: newStatus });
+            
+            // Actualización del estado en el cliente de forma reactiva
+            setOrders(prevOrders =>
+                prevOrders.map(order =>
+                    order._id === orderId ? { ...order, status: newStatus } : order
+                )
+            );
+            
+            toast.success(`Pedido actualizado a ${newStatus === "Pagado" ? "Aprobado" : newStatus} con éxito`);
+        } catch (error) {
+            console.error(error);
+            toast.error(error.response?.data?.message || "Error al modificar el estado de la orden");
+        }
+    };
+
     return (
         <div className="admin-data-view">
             <div className="admin-section-header">
@@ -51,9 +78,41 @@ export default function OrdersTab({ orders }) {
                                     </td>
                                     <td>{formatDate(order.createdAt)}</td>
                                     <td><OrderProducts products={order.products} /></td>
-                                    <td>${(order.total || 0).toLocaleString("es-AR")}</td>
-                                    <td>{order.paymentMethod || "Pendiente"}</td>
-                                    <td>{order.status || "Pendiente"}</td>
+                                    <td>\${(order.total || 0).toLocaleString("es-AR")}</td>
+                                    <td style={{ textTransform: "capitalize" }}>
+                                        {order.paymentMethod || "Pendiente"}
+                                    </td>
+                                    <td>
+                                        {/* 🔀 CONDICIÓN EXCLUSIVA: Si es transferencia habilita el selector interactivo */}
+                                        {order.paymentMethod === "transferencia" ? (
+                                            <select
+                                                value={order.status || "Pendiente"}
+                                                onChange={(e) => handleStatusChange(order._id, e.target.value)}
+                                                className={`admin-status-select ${order.status?.toLowerCase()}`}
+                                                style={{
+                                                    padding: "6px 12px",
+                                                    borderRadius: "6px",
+                                                    fontWeight: "600",
+                                                    cursor: "pointer",
+                                                    border: "1px solid #ccc",
+                                                    backgroundColor: "#1b2237",
+                                                    color: "#Fdfbf7"
+                                                }}
+                                            >
+                                                <option value="Pendiente">⏳ Pendiente</option>
+                                                <option value="Pagado">✅ Aprobado</option> {/* Guarda 'Pagado' en MongoDB conforme a tu enum */}
+                                                <option value="Cancelado">❌ Cancelado</option>
+                                            </select>
+                                        ) : (
+                                            /* Si es Mercado Pago, se visualiza fijo en modo solo lectura */
+                                            <span 
+                                                className={`admin-status-badge ${order.status?.toLowerCase()}`}
+                                                style={{ fontWeight: "600", color: "#Fdfbf7" }}
+                                            >
+                                                {order.status === "Pagado" ? "✅ Aprobado" : `⏳ ${order.status || "Pendiente"}`}
+                                            </span>
+                                        )}
+                                    </td>
                                 </tr>
                             ))}
                         </tbody>

@@ -1,48 +1,31 @@
-
 import express from "express";
-import { receiveWebhook } from "../controllers/orderController.js";
+import { 
+    createOrder, 
+    getAllOrders, 
+    getMyOrders,
+    receiveWebhook,
+    updateOrderStatus
+} from "../controllers/orderController.js";
 
- import {
-    createOrder,
-    createMercadoPagoPreference,
-    getAllOrders,
-    getMyOrders
- } from "../controllers/orderController.js";
-
- import authMiddleware from "../middleware/authMiddleware.js";
+// Mantenemos tus middlewares originales con sus nombres exactos
+import authMiddleware from "../middleware/authMiddleware.js";
+import adminMiddleware from "../middleware/adminMiddleware.js";
  
- import adminMiddleware from "../middleware/adminMiddleware.js";
- 
- const router = express.Router();
+const router = express.Router();
 
- router.post(
-    "/webhook",
-    receiveWebhook
- );
+// 🚀 1. WEBHOOK: Mercado Pago le pega a esta ruta de forma automática
+router.post("/webhook", receiveWebhook);
 
- router.post(
-    "/",
-    authMiddleware,
-    createOrder
- );
+// 🚀 2. CREAR ORDEN: Crea en Mongo y bifurca (MP o Transferencia)
+router.post("/", authMiddleware, createOrder);
 
- router.post(
-    "/create-preference",
-    authMiddleware,
-    createMercadoPagoPreference
- );
+// 🚀 3. VER MIS PEDIDOS: Para el perfil del cliente
+router.get("/my-orders", authMiddleware, getMyOrders);
 
- router.get(
-    "/my-orders",
-    authMiddleware,
-    getMyOrders
- );
+// 🚀 4. VER TODOS LOS PEDIDOS: Exclusivo para el Dashboard del Administrador
+router.get("/", authMiddleware, adminMiddleware, getAllOrders);
 
- router.get(
-    "/",
-    authMiddleware,
-    adminMiddleware,
-    getAllOrders
- );
+// 🚀 5. ACTUALIZAR ESTADO DE ORDEN: Solo accesible para el Administrador autenticado
+router.put("/:id/status", authMiddleware, adminMiddleware, updateOrderStatus);
 
- export default router;
+export default router;

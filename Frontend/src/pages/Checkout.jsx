@@ -8,14 +8,14 @@ import "@/styles/checkout.scss";
 
 function Checkout() {
   const navigate = useNavigate();
-  const { cart, totalPrice, clearCart } = useContext(CartContext);
+  const { cart, totalPrice } = useContext(CartContext);
   const [paymentMethod, setPaymentMethod] = useState("mercadopago");
   const [preferenceId, setPreferenceId] = useState(null);
   const [loading, setLoading] = useState(false);
   const [bankDetails, setBankDetails] = useState(null);
 
   const handleCheckout = async () => {
-    if (cart.length === 0) {
+    if (cart.length === 0 && !preferenceId) { // 🟢 Ajustado por seguridad
       toast.error("Tu carrito está vacío");
       return;
     }
@@ -30,7 +30,6 @@ function Checkout() {
     setLoading(true);
 
     try {
-      // Petición UNIFICADA hacia tu backend (Pasa por tu nuevo controlador bifurcado)
       const response = await orderApi.post("/", {
         products: cart.map(item => ({  
           productId: item._id,
@@ -40,7 +39,7 @@ function Checkout() {
           size: item.size || "default"
         })),
         total: totalPrice,
-        paymentMethod: paymentMethod // "mercadopago" o "transferencia"
+        paymentMethod: paymentMethod 
       });
 
       if (paymentMethod === "mercadopago" && response.data.preferenceId) {
@@ -50,7 +49,7 @@ function Checkout() {
       else if (paymentMethod === "transferencia") {
         setBankDetails(response.data.bankData);
         toast.success("¡Pedido registrado! Realice la transferencia.");
-        clearCart(); // Limpiamos el carrito local ya que la orden quedó en la BD
+        //clearCart(); 
       } 
     } catch (error) {
       console.error(error);
@@ -65,11 +64,10 @@ function Checkout() {
       <div className="checkout-shell">
         <h1 className="checkout-title">Checkout</h1>
 
-        {/* 1. Si el carrito está vacío Y no se generaron datos de transferencia bancaria */}
-        {cart.length === 0 && !bankDetails ? (
+        {/* 🟢 CORRECCIÓN CRÍTICA: Solo muestra vacío si no hay un id de Mercado Pago procesándose */}
+        {cart.length === 0 && !bankDetails && !preferenceId ? (
           <p className="checkout-empty">Tu carrito está vacío.</p>
         ) : bankDetails ? (
-          /* 2. Si eligió transferencia bancaria y ya se registró la orden en la BD */
           <div className="bank-transfer-success">
             <h2>🎉 ¡Pedido Recibido!</h2>
             <p>Tu orden ha sido registrada con éxito en estado <strong>Pendiente</strong>.</p>
@@ -77,37 +75,39 @@ function Checkout() {
             <div className="bank-card">
               <p><strong>Titular:</strong> {bankDetails.titular}</p>
               <p><strong>Banco:</strong> {bankDetails.banco}</p>
-              <p><strong>CBU:</strong> {bankDetails.cbu}</p> {/* 🟢 Corregido 'bbu' */}
+              <p><strong>CBU:</strong> {bankDetails.cbu}</p> 
               <p><strong>Alias:</strong> {bankDetails.alias}</p>
               <p><strong>Monto a transferir:</strong> \${totalPrice}</p>
             </div>
-            <p className="bank-note">💡 Envía el comprobante de pago por WhatsApp o Correo. Una vez verificado, aprobaremos tu pedido desde el Dashboard.</p>
+            <p className="bank-note">💡 Envía el comprobante de pago por WhatsApp o Correo. Una vez verificado, aprobaremos tu pedido</p>
             <button className="checkout-button" onClick={() => navigate("/perfil")}>Ver mis pedidos</button>
           </div>
         ) : (
-          /* 3. Flujo común del carrito de compras listo para pagar */
           <>
-            <div className="checkout-products">
-              {cart.map(item => (
-                <div key={`${item._id}-${item.size || "default"}`} className="checkout-item">
-                  <div className="checkout-image">
-                    <img src={
-                      Array.isArray(item.image)
-                        ? import.meta.env.BASE_URL + item.image[0].replace("/", "")
-                        : import.meta.env.BASE_URL + item.image.replace("/", "")
-                    } alt={item.title} />
-                  </div>
-                  <div className="checkout-details">
-                    <div className="checkout-detail-text">
-                      <h5 className="checkout-detail">{item.title}</h5>
-                      {item.size && <p className="checkout-size">Talle: {item.size}</p>}
+            {/* 🟢 No renderizar la lista si el carrito ya se limpió, pero mantener la estructura viva */}
+            {cart.length > 0 && (
+              <div className="checkout-products">
+                {cart.map(item => (
+                  <div key={`${item._id}-${item.size || "default"}`} className="checkout-item">
+                    <div className="checkout-image">
+                      <img src={
+                        Array.isArray(item.image)
+                          ? import.meta.env.BASE_URL + item.image[0].replace("/", "")
+                          : import.meta.env.BASE_URL + item.image.replace("/", "")
+                      } alt={item.title} />
                     </div>
-                    <p className="checkout-quantity">X{item.quantity}</p>
-                    <p className="checkout-price">\${item.price}</p>
+                    <div className="checkout-details">
+                      <div className="checkout-detail-text">
+                        <h5 className="checkout-detail">{item.title}</h5>
+                        {item.size && <p className="checkout-size">Talle: {item.size}</p>}
+                      </div>
+                      <p className="checkout-quantity">X{item.quantity}</p>
+                      <p className="checkout-price">\${item.price}</p>
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
 
             <div className="checkout-payment">
               <h3>Método de pago</h3>
@@ -118,7 +118,7 @@ function Checkout() {
                     name="paymentMethod"
                     value="mercadopago"
                     checked={paymentMethod === "mercadopago"}
-                    disabled={preferenceId} // Deshabilitado si el botón de MP ya está activo
+                    disabled={preferenceId} 
                     onChange={(e) => setPaymentMethod(e.target.value)}
                   />
                   <span className="mercadopago">Mercado Pago</span>
@@ -130,22 +130,29 @@ function Checkout() {
                     name="paymentMethod"
                     value="transferencia"
                     checked={paymentMethod === "transferencia"}
-                    disabled={preferenceId} // Deshabilitado si el botón de MP ya está activo
+                    disabled={preferenceId} 
                     onChange={(e) => setPaymentMethod(e.target.value)}
                   />
                   <span>Transferencia</span>
                 </label>
               </div>
 
-              {/* Botón interactivo de Mercado Pago */}
+              {/* 🟢 El onReady ahora solo avisa, no destruye el carrito local para prevenir abandonos involuntarios antes de pagar */}
               {paymentMethod === "mercadopago" && preferenceId && (
-                <div className="checkout-wallet">
-                  <Wallet initialization={{ preferenceId }} onReady={() => clearCart()} />
+                <div className="checkout-wallet" style={{ marginTop: '20px' }}>
+                  <Wallet 
+                    initialization={{ preferenceId }} 
+                    onReady={() => {
+                      console.log("Botón de Mercado Pago listo");
+                      // RECOMENDACIÓN: Si prefieres vaciarlo sí o sí al aparecer el botón, puedes mantener clearCart() aquí.
+                      // Con la nueva condición de arriba ya no se borrará la pantalla.
+                      //clearCart(); 
+                    }} 
+                  />
                 </div>
               )}
             </div>
 
-            {/* Ocultamos el resumen si el botón de Mercado Pago ya se generó en pantalla */}
             {!preferenceId && (
               <div className="checkout-summary">
                 <h2>Total: \${totalPrice}</h2>
