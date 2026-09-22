@@ -77,7 +77,7 @@ function Checkout() {
               <p><strong>Banco:</strong> {bankDetails.banco}</p>
               <p><strong>CBU:</strong> {bankDetails.cbu}</p> 
               <p><strong>Alias:</strong> {bankDetails.alias}</p>
-              <p><strong>Monto a transferir:</strong> \${totalPrice}</p>
+              <p><strong>Monto a transferir:</strong> ${totalPrice}</p>
             </div>
             <p className="bank-note">💡 Envía el comprobante de pago por WhatsApp o Correo. Una vez verificado, aprobaremos tu pedido</p>
             <br/>

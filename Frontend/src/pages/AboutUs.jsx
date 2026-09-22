@@ -8,7 +8,7 @@ const Nosotros = () => {
       
       {/* Page Header Banner */}
       <div className="nosotros-hero">
-        <h1>Sobre Nosotros</h1>
+        <h1 id='AbusH'>Sobre Nosotros</h1>
         <p>Conoce la historia, el esfuerzo y la visión detrás de SLAM Corps.</p>
       </div>
 

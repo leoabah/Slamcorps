@@ -105,10 +105,10 @@ export const createOrder = async (req, res) => {
                 message: "Orden registrada correctamente bajo transferencia bancaria.",
                 order,
                 bankData: {
-                    banco: "Banco Galicia",
-                    cbu: "0070123420000012345678",
-                    alias: "libreria.cosmica.mp",
-                    titular: "Libreria Cosmica S.R.L."
+                    banco: "Banco Provincia",
+                    cbu: "0140004503400451984457",
+                    alias: "rociodeminkoe.junior",
+                    titular: "Serge Lazare Minkoe Minkoe"
                 }
             });
         }
