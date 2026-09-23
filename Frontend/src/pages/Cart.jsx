@@ -2,13 +2,10 @@ import { useContext } from "react"
 import { CartContext } from "../context/cartContext.js"
 import { FaMinus, FaPlus } from "react-icons/fa";
 import "@/styles/cart.scss"
-import orderApi from "../api/orderApi.js";
 import { useNavigate } from "react-router-dom"
-import { toast } from "react-hot-toast";
 import { getImageUrl } from "../utils/imageUrl";
 
 export default function Cart(){
-
      const navigate = useNavigate();
 
      const {
@@ -20,145 +17,78 @@ export default function Cart(){
         clearCart
      } = useContext(CartContext);
 
-     const handleCheckout = async ()=>{
-
-       const token = localStorage.getItem("token");
-
-       if(!token){
-        toast.error(
-            "Debes iniciar sesion para comprar"
-        );
-        return;
-       }
-
-       try{
-
-        const products = cart.map(item =>({
-            productId: item._id,
-            quantity: item.quantity,
-            size: item.size
-        }));
-        
-        const response =  await orderApi.post (
-        "/",
-        {
-            products,
-            total: totalPrice
-        },
-        {
-            headers:{
-                Authorization:
-                `Bearer ${token}`
-            }
-        }
-       );
-
-       toast.success(
-        response.data.message ||
-        "Compra realizada correctamente"
-       );
-
-       clearCart();
-
-       navigate("/perfil");
-
-    } catch(error) {
-
-        console.error(error);
-
-        toast.error(
-            error.response?.data?.message ||
-            "Error al finalizar la compra"
-        );
-    }
-};
      return(
         <div className="main-cartshop">
-            
             <br />
             <br />
 
             {cart.length === 0 ? (
-                <p style={{"fontSize":"40px",
-                           "textAlign":"center"
-                           }}> 
+                <p style={{"fontSize":"40px", "textAlign":"center"}}> 
                     <strong>
-                        <em>carrito esta </em> vacio
+                        <em>tu carrito está </em> vacío
                     </strong>
                 </p>
             ) : (
                 <>
                 {cart.map(item => (
-                    <div key={`${item._id}-${item.size}`}
-                    className="cart-item"
-                    >
+                    // 🟢 CLAVE: La key ahora incluye el talle para renderizar variantes independientes de forma correcta
+                    <div key={`${item._id}-${item.size || "default"}`} className="cart-item">
                         <img 
-                        src={getImageUrl(
-                            Array.isArray(item.image)
-                            ? item.image[0]
-                            : item.image
-                        )}
+                            src={getImageUrl(
+                                Array.isArray(item.image) ? item.image[0] : item.image
+                            )}
+                            alt={item.title}
                         />
                         <h3>{item.title}</h3>
                         {item.size && (
                             <p className="item-size-badge">
-                                Talle:<strong>{item.size}</strong> 
+                                Talle: <strong>{item.size}</strong> 
                             </p>
                         )}
 
-                        <p>
-                            X{item.quantity}
-                        </p>
-
-                        <p>
-                             ${item.price}
-                        </p>
+                        <p>X{item.quantity}</p>
+                        <p>\${item.price}</p>
+                        
                         <div className="quantity-controls">
-                            <button onClick={() =>
-                                decreaseQuantity(item._id)
-                            }className="btn-count"
+                            {/* 🟢 CORRECCIÓN: Se pasa el id y el talle para disminuir de forma selectiva */}
+                            <button 
+                                onClick={() => decreaseQuantity(item._id, item.size)} 
+                                className="btn-count"
                             >
-                            <FaMinus />
+                                <FaMinus />
                             </button>
-                            <span>
-                                {item.quantity}
-                            </span>
+                            
+                            <span>{item.quantity}</span>
 
-                            <button
-                             onClick={()=> 
-                                increaseQuantity(item._id)
-                             }className="btn-count"
+                            {/* 🟢 CORRECCIÓN: Se pasa el id y el talle para aumentar respetando el tope de stock máximo */}
+                            <button 
+                                onClick={() => increaseQuantity(item._id, item.size)} 
+                                className="btn-count"
                             >
-                            <FaPlus />
+                                <FaPlus />
                             </button>
                         </div>
+                        
+                        {/* 🟢 CORRECCIÓN: Se pasa el id y el talle para remover únicamente la variante correcta */}
                         <button 
-                        onClick={() =>
-                            removeFromCart(item._id)
-                        } 
-                        className="btn-cart"
+                            onClick={() => removeFromCart(item._id, item.size)} 
+                            className="btn-cart"
                         >
                             Eliminar
                         </button>
                     </div>
                 ))}
 
-                <h2 style={{background:"white"}}>Total: ${totalPrice}</h2>
+                <h2 style={{background:"white"}}>Total: \${totalPrice}</h2>
 
-                <div
-                className="botton-cart"
-                >
+                <div className="botton-cart">
+                    <button onClick={clearCart}>
+                        Vaciar carrito
+                    </button>
 
-                <button onClick={clearCart} >
-                    Vaciar carrito
-                </button>
-
-                <button
-                 onClick={() => navigate("/checkout")}
-                 
-                >
-                    Finalizar Compra
-                </button>
+                    <button onClick={() => navigate("/checkout")}>
+                        Finalizar Compra
+                    </button>
                 </div>
                 </>
             )}

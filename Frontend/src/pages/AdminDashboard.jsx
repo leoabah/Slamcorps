@@ -79,15 +79,32 @@ export default function AdminDashboard() {
         [products, search]
     );
 
-    // Cálculos de métricas optimizados
+    
+        // 🟢 CÓMPUTOS DE MÉTRICAS PARA STOCK POR TALLE
     const metrics = useMemo(() => ({
         totalProducts: products.length,
-        totalStock: products.reduce((acc, product) => acc + (product.stock || 0), 0),
-        totalValue: products.reduce((acc, product) => acc + ((product.price || 0) * (product.stock || 0)), 0),
+        
+        // Sumamos el stock interno de S, M, L y XL de cada producto
+        totalStock: products.reduce((acc, product) => {
+            const productSizeStock = product.stock && typeof product.stock === 'object'
+                ? Object.values(product.stock).reduce((sAcc, sCurr) => sAcc + (sCurr || 0), 0)
+                : 0;
+            return acc + productSizeStock;
+        }, 0),
+
+        // Multiplicamos el precio por la sumatoria total de stock de ese producto
+        totalValue: products.reduce((acc, product) => {
+            const productSizeStock = product.stock && typeof product.stock === 'object'
+                ? Object.values(product.stock).reduce((sAcc, sCurr) => sAcc + (sCurr || 0), 0)
+                : 0;
+            return acc + ((product.price || 0) * productSizeStock);
+        }, 0),
+
         sentOrders: orders.filter(o => o.status === "Pagado").length,
         pendingOrders: orders.filter(o => o.status === "Pendiente").length,
         newClients: new Set(orders.map(order => order.user?._id).filter(Boolean)).size
     }), [products, orders]);
+
 
     // Manejador de eliminación de producto
     const handleDelete = useCallback(async(id) => {

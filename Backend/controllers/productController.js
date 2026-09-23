@@ -71,12 +71,26 @@ export const getProductById = async (req, res) => {
     }
 };
 
-// 🔵 CREAR PRODUCTO (Tu lógica híbrida perfecta)
+// 🟢 REEMPLAZA ÚNICAMENTE TU FUNCIÓN createProduct POR ESTA EN EL BACKEND:
 export const createProduct = async (req, res) => {
     try {
         const { title, description, price, category, stock, imageURLs } = req.body;
         
         console.log("📤 Recibido en createProduct:", { title, category, filesCount: req.files?.length, hasImageURLs: !!imageURLs });
+        
+        // 🛠️ CORRECCIÓN 1: Procesamiento seguro del Stock por Talle (Clonado de tu lógica de updateProduct)
+        let parsedStock = { S: 0, M: 0, L: 0, XL: 0 }; // Valores por defecto por seguridad
+        if (stock) {
+            if (typeof stock === 'string') {
+                try {
+                    parsedStock = JSON.parse(stock);
+                } catch (e) {
+                    console.error("❌ Error al parsear stock string en backend:", e);
+                }
+            } else if (typeof stock === 'object') {
+                parsedStock = stock;
+            }
+        }
         
         let finalImages = [];
         if (req.files && req.files.length > 0) {
@@ -86,22 +100,24 @@ export const createProduct = async (req, res) => {
         } 
         else if (imageURLs) {
             console.log("🔗 Usando URLs proporcionadas:", imageURLs);
+            // Si viene de una URL de texto plano en JSON, nos aseguramos de que sea un Array
             finalImages = Array.isArray(imageURLs) ? imageURLs : [imageURLs];
         } else {
             console.warn("⚠️ No se encontraron imágenes");
         }
 
+        // 🛠️ CORRECCIÓN 2: Guardamos 'parsedStock' como el objeto que MongoDB espera recibir
         const newProduct = new Product({
             title,
             description,
             price: Number(price),
             category,
-            stock: Number(stock),
+            stock: parsedStock, // 👈 Guardamos el objeto completo {S, M, L, XL} con sus cantidades
             image: finalImages 
         });
 
         const savedProduct = await newProduct.save();
-        console.log("💾 Producto guardado:", savedProduct._id);
+        console.log("💾 Producto guardado con éxito:", savedProduct._id);
         return res.status(201).json({ message: "Producto creado con éxito!", product: savedProduct });
 
     } catch (error) {
@@ -114,53 +130,80 @@ export const createProduct = async (req, res) => {
     }
 };
 
-// 🟠 ACTUALIZAR PRODUCTO (Corregido para recibir nuevas fotos)
+// 🟠 ACTUALIZAR PRODUCTO (Corregido para guardar Stock siempre)
 export const updateProduct = async (req, res) => {
     try {
         const { id } = req.params;
         const { title, description, price, category, stock, imageURLs } = req.body;
 
-        // Buscamos el producto actual para saber qué imágenes tenía antes
+        // 1. Buscamos el producto actual en la base de datos
         const currentProduct = await Product.findById(id);
-        if (!currentProduct) return res.status(404).json({ message: "Producto no encontrado" });
+        if (!currentProduct) {
+            return res.status(404).json({ message: "Producto no encontrado" });
+        }
 
-        // Preparamos los datos básicos a actualizar
+        // 2. Procesamiento seguro del Stock por Talle
+        let parsedStock;
+        if (stock) {
+            if (typeof stock === 'string') {
+                try {
+                    parsedStock = JSON.parse(stock);
+                } catch (e) {
+                    console.error("Error al parsear stock string en backend:", e);
+                }
+            } else if (typeof stock === 'object') {
+                parsedStock = stock;
+            }
+        }
+
+        // 3. Preparamos el objeto con los datos que se actualizarán SÍ O SÍ
         let updateData = { 
-            title, 
-            description, 
-            category,
-            price: price ? Number(price) : undefined,
-            stock: stock ? Number(stock) : undefined
+            title: title || currentProduct.title, 
+            description: description || currentProduct.description, 
+            category: category || currentProduct.category,
+            price: price ? Number(price) : currentProduct.price,
+            stock: parsedStock || currentProduct.stock // 👈 Garantiza que el stock se asigne siempre
         };
 
-        // Procesamos las imágenes si se enviaron cambios
+        // 4. Procesamiento condicional de imágenes
         let newImages = [];
         let hasNewImages = false;
 
         if (req.files && req.files.length > 0) {
+            console.log("📸 Procesando nuevas imágenes subidas...");
             newImages = await Promise.all(req.files.map(uploadToCloudinary));
             hasNewImages = true;
         } else if (imageURLs) {
+            console.log("🔗 Procesando nuevas URLs de imágenes...");
             newImages = Array.isArray(imageURLs) ? imageURLs : [imageURLs];
             hasNewImages = true;
         }
 
+        // Si el usuario envió imágenes nuevas (por archivo o URL), reemplazamos las anteriores
         if (hasNewImages) {
-            // Si el producto viejo tenía fotos locales en /uploads, las borramos del disco duro
             deleteLocalFiles(currentProduct.image);
-            // Agregamos las nuevas rutas al objeto de actualización
             updateData.image = newImages;
+        } else {
+            // 🟢 CLAVE: Si no envió imágenes, conservamos intactas las que ya tenía el producto
+            updateData.image = currentProduct.image;
         }
 
-        // Ejecutamos la actualización en MongoDB
-        const updatedProduct = await Product.findByIdAndUpdate(id, updateData, { new: true });
+        // 5. Ejecutamos la actualización física en MongoDB con el estándar moderno
+        const updatedProduct = await Product.findByIdAndUpdate(
+            id, 
+            updateData, 
+            { returnDocument: 'after' }
+        );
         
+        console.log("✅ Producto actualizado con éxito en la base de datos.");
         return res.json({ message: "Producto actualizado con éxito", product: updatedProduct });
 
     } catch (error) {
+        console.error("❌ Error en updateProduct del backend:", error);
         return res.status(500).json({ message: "Error al actualizar el producto", error: error.message });
     }
 };
+
 
 // 🔴 ELIMINAR PRODUCTO (Corregido para limpiar el disco duro)
 export const deleteProduct = async (req, res) => {

@@ -1,7 +1,6 @@
 @use "./variables/colors" as *;
 
 .alta-container{
-    
     display: grid;
     grid-template-columns: 1fr 1fr;
     align-items: center;
@@ -28,9 +27,7 @@
    
     h1{
         font-size: 4.5rem;
-        
         font-weight: bold;
-        
     }
 }
 .alta-form-title{
@@ -54,8 +51,8 @@
     label{
         font-size: 1.2rem;
         font-weight: bolder;
-
     }
+
     input,
     textarea{
         width: 100%;
@@ -66,19 +63,73 @@
         font-size: 1rem;
         outline: none;
         border-radius: 8px;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
     }
+
     textarea{
-       
         resize: none;
         min-height: 120px;
     }
+
     input::placeholder,
     textarea::placeholder{
-        color: #ffffff99;
+        color: #12121266; // 🟢 Ajustado el contraste para que sea visible sobre el fondo claro
+    }
+
+    // 🟢 NUEVA SECCIÓN: Contenedor estético y alineado para los botones/inputs de talles
+    .size-stock-container {
+        display: flex;
+        gap: 1.2rem;
+        flex-wrap: wrap;
+        margin-top: 0.5rem;
+        background-color: rgba(255, 255, 255, 0.1); // Fondo translúcido sutil que combina con el fondo azul oscuro
+        padding: 1.2rem;
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+
+        .size-stock-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 75px; // Ancho fijo perfecto para mantener todo alineado en columnas distribuidas
+
+            label {
+                font-size: 1rem;
+                font-weight: bold;
+                color: #fdfbf7;
+                margin-bottom: 0.4rem;
+                text-transform: uppercase;
+            }
+
+            input[type="number"] {
+                width: 100%;
+                padding: 0.6rem;
+                text-align: center;
+                font-size: 1.1rem;
+                font-weight: bold;
+                color: #14031f;
+                background: #fdfbf7;
+                border: 2px solid transparent;
+                border-radius: 8px;
+
+                // Ocultar las flechas de control nativas del input numérico
+                &::-webkit-outer-spin-button,
+                &::-webkit-inner-spin-button {
+                  -webkit-appearance: none;
+                  margin: 0;
+                }
+                -moz-appearance: textfield;
+
+                &:focus {
+                    border-color: #8db8c8;
+                    box-shadow: 0 0 10px rgba(141, 184, 200, 0.5);
+                }
+            }
+        }
     }
 }
 
-.checkbox-group{
+.checkbox-group {
     display: flex;
     gap: 2rem;
     font-size: 1.2rem;
@@ -90,7 +141,8 @@
       gap: 0.5rem;
     }
 }
-.btn-submit{
+
+.btn-submit {
     width: 250px;
     align-self: center;
     margin-top: 2rem;
@@ -109,8 +161,10 @@
         background: #A68A56;
     }
 }
-.fomr-group input:focus,
-.fomr-group textarea:focus{
+
+// 🟢 CORREGIDO: Error tipográfico anterior de '.fomr-group' a '.form-group'
+.form-group input:focus,
+.form-group textarea:focus {
     border-color:#8db8c8;
     box-shadow: 0 0 10px rgba(141,184,200,.5);
 }
@@ -148,5 +202,4 @@
             background: #A68A56;
         }
     }
-
 }

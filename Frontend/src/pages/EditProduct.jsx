@@ -5,19 +5,23 @@ import { toast } from "react-toastify";
 import "@/styles/editProduct.scss";
 import { getImageUrl } from "@/utils/imageUrl";
 
-
 export default function EditProduct() {
   const { id } = useParams();
   const navigate = useNavigate();
   const MAX_IMAGES = 4;
 
-  // 1. Campos corregidos para coincidir con Mongoose (title, description)
+  // 1. Inicialización de los estados base del producto
   const [form, setForm] = useState({
     title: "",
     price: "",
-    stock: "",
     category: "",
-    description: ""
+    description: "",
+    stock: {
+      S: 0,
+      M: 0,
+      L: 0,
+      XL: 0
+    }
   });
 
   // Control híbrido de imágenes
@@ -27,34 +31,46 @@ export default function EditProduct() {
   const [urls, setUrls] = useState([""]);
   const [loading, setLoading] = useState(false);
 
-  // 2. Traer los datos existentes del producto al cargar la página
+  // 2. Carga y mapeo seguro de datos del producto existente
   useEffect(() => {
     const getProduct = async () => {
       try {
         const response = await productsApi.get(`/${id}`);
         const product = response.data;
         
+        // Sincronización del stock previniendo valores nulos o corruptos
+        const parsedStock = product.stock && typeof product.stock === "object"
+          ? {
+              S: product.stock.S ?? 0,
+              M: product.stock.M ?? 0,
+              L: product.stock.L ?? 0,
+              XL: product.stock.XL ?? 0
+            }
+          : { S: 0, M: 0, L: 0, XL: 0 };
+
         setForm({
           title: product.title || "",
           price: product.price || "",
-          stock: product.stock || "",
           category: product.category || "",
-          description: product.description || ""
+          description: product.description || "",
+          stock: parsedStock
         });
 
-        // Si el producto ya tenía imágenes guardadas, las precargamos en el modo correspondiente
+        // Formateo seguro para la carga de imágenes existentes
         if (product.image && product.image.length > 0) {
-          if (product.image[0].startsWith("/uploads/")) {
+          const imagesArray = Array.isArray(product.image) ? product.image : [product.image];
+          const firstImage = imagesArray[0] || "";
+          
+          if (firstImage.startsWith("/uploads/")) {
             setImageType("file");
-            // Al ser rutas del servidor, mostramos las miniaturas apuntando al backend
-            setImagePreviews(product.image.map(getImageUrl));
+            setImagePreviews(imagesArray.map(getImageUrl));
           } else {
             setImageType("url");
-            setUrls(product.image);
+            setUrls(imagesArray);
           }
         }
       } catch (error) {
-        console.error(error);
+        console.error("❌ Error cargando producto:", error);
         toast.error("No se pudieron cargar los datos del producto");
       }
     };
@@ -66,7 +82,16 @@ export default function EditProduct() {
     setForm({ ...form, [name]: value });
   };
 
-  // Manejo de archivos físicos
+  const handleSizeStockChange = (size, value) => {
+    setForm((prevForm) => ({
+      ...prevForm,
+      stock: {
+        ...prevForm.stock,
+        [size]: Number(value)
+      }
+    }));
+  };
+
   const handleFileChange = (e) => {
     const selectedFiles = Array.from(e.target.files);
     if (!selectedFiles.length) return;
@@ -76,7 +101,6 @@ export default function EditProduct() {
     setImagePreviews(combined.map((file) => URL.createObjectURL(file)));
   };
 
-  // Manejo de URLs escritas
   const handleUrlChange = (index, value) => {
     const updateUrls = [...urls];
     updateUrls[index] = value;
@@ -87,128 +111,160 @@ export default function EditProduct() {
     if (urls.length < MAX_IMAGES) setUrls([...urls, ""]);
   };
 
-  // 3. Envío adaptado al controlador del backend
+  // 3. Envío blindado contra recargas y desvíos involuntarios
   const updateProduct = async (e) => {
-    e.preventDefault();
-    setLoading(true);
+    // 🟢 DETENCIÓN TOTAL: Evita que el HTML recargue la ventana pase lo que pase
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
 
+    setLoading(true);
     const token = localStorage.getItem("token");
     let payload;
     let headers = { "Authorization": `Bearer ${token}` };
 
     if (imageType === "file") {
       payload = new FormData();
-      Object.entries(form).forEach(([key, value]) => payload.append(key, value));
+      payload.append("title", form.title);
+      payload.append("price", Number(form.price));
+      payload.append("category", form.category);
+      payload.append("description", form.description);
       
-      // Solo adjuntamos archivos si el usuario seleccionó fotos NUEVAS
-      if (files.length > 0) {
+      // Enviamos el objeto parseado como texto string estructurado
+      payload.append("stock", JSON.stringify(form.stock));
+      
+      // Adjuntamos binarios únicamente si el administrador cargó archivos nuevos
+      if (files && files.length > 0) {
         files.forEach((file) => payload.append("image", file));
       }
-      headers["Content-Type"] = "multipart/form-data";
+      // Dejamos que Axios maneje el Content-Type dinámicamente con las boundaries
     } else {
       const cleanUrls = urls.map((u) => u.trim()).filter((u) => u !== "");
       payload = {
-        ...form,
+        title: form.title,
         price: Number(form.price),
-        stock: Number(form.stock),
+        category: form.category,
+        description: form.description,
+        stock: form.stock,
         imageURLs: cleanUrls.length > 0 ? cleanUrls : undefined 
       };
       headers["Content-Type"] = "application/json";
     }
 
     try {
-      await productsApi.put(`/${id}`, payload, { headers });
+      console.log("🚀 Iniciando envío de datos a la API...");
+      const response = await productsApi.put(`/${id}`, payload, { headers });
+      
+      console.log("✅ Servidor respondió exitosamente:", response.data);
+      
+      // Lanzamos la alerta de confirmación en pantalla
       toast.success("Producto actualizado con éxito");
-      navigate("/");
+      
+      // 🟢 Retardo de cortesía: Le damos 1.2 segundos para leer el Toast antes de redirigir
+      setTimeout(() => {
+        navigate("/");
+      }, 1200);
+
     } catch (error) {
-      console.error(error);
-      toast.error(error.response?.data?.message || "Error al actualizar");
+      console.error("❌ Ocurrió un error al despachar la actualización:");
+      console.error("Status del Servidor:", error.response?.status);
+      console.error("Respuesta del Backend:", error.response?.data);
+      
+      toast.error(error.response?.data?.message || "Error al actualizar el producto");
     } finally {
       setLoading(false);
     }
   };
 
-
-return (
-  <div className='edit-contain'>
-    <section className='edit-container'>
-      
-    
-
-      {/* Columna Derecha: Contenedor del Formulario */}
-      <div className='edit-form-container'>
-        <h1 className='edit-form-title'>Editar Producto</h1>
-        
-        <form className="edit-form" onSubmit={updateProduct}>
+  return (
+    <div className='edit-contain'>
+      <section className='edit-container'>
+        <div className='edit-form-container'>
+          <h1 className='edit-form-title'>Editar Producto</h1>
           
-          <div className='form-group'>
-            <label>Título:</label>
-            <input type='text' name='title' value={form.title} onChange={handleChange} required />
-          </div>
-
-          <div className='form-group'>
-            <label>Precio:</label>
-            <input type="number" name='price' value={form.price} onChange={handleChange} required />
-          </div>
-
-          <div className='form-group'>
-            <label>Descripción:</label>
-            <textarea name='description' value={form.description} onChange={handleChange} />
-          </div>
-
-          <div className='form-group'>
-            <label>Cantidad:</label>
-            <input type="number" name='stock' value={form.stock} onChange={handleChange} required />
-          </div>
-
-          <div className='form-group'>
-            <label>Categoría:</label>
-            <div className='checkbox-group'>
-              <label><input type="radio" name="category" value="short" checked={form.category === "short"} onChange={handleChange} /> Short</label>
-              <label><input type="radio" name="category" value="pantalon" checked={form.category === "pantalon"} onChange={handleChange} /> Pantalón</label>
-              <label><input type="radio" name="category" value="jogging" checked={form.category === "jogging"} onChange={handleChange} /> Jogging</label>
-              <label><input type="radio" name="category" value="gorra" checked={form.category === "gorra"} onChange={handleChange} /> Gorra</label>
-            </div>
-          </div>
-
-          {/* Caja contenedora híbrida de fotos */}
-          <div className='form-group image-manager-box'>
-            <label style={{ fontWeight: 'bold' }}>Método de carga de imágenes:</label>
-            <div className="image-type-selector">
-              <label><input type="radio" name="imageType" value="file" checked={imageType === "file"} onChange={() => setImageType("file")} /> Subir desde PC</label>
-              <label><input type="radio" name="imageType" value="url" checked={imageType === "url"} onChange={() => setImageType("url")} /> Pegar URL</label>
+          <form className="edit-form" onSubmit={updateProduct}>
+            <div className='form-group'>
+              <label>Título:</label>
+              <input type='text' name='title' value={form.title} onChange={handleChange} required />
             </div>
 
-            {imageType === "file" ? (
-              <div>
-                <input type="file" name="image" accept="image/*" multiple onChange={handleFileChange} />
-                {imagePreviews.length > 0 && (
-                  <div className="image-previews">
-                    {imagePreviews.map((preview, index) => (
-                      <img key={index} src={preview} alt={`Vista previa ${index + 1}`} />
-                    ))}
-                  </div>
-                )}
-              </div>
-            ) : (
-              <div>
-                {urls.map((url, index) => (
-                  <div key={index} className="url-input-row">
-                    <input type="text" value={url} onChange={(e) => handleUrlChange(index, e.target.value)} />
+            <div className='form-group'>
+              <label>Precio:</label>
+              <input type="number" name='price' value={form.price} onChange={handleChange} required />
+            </div>
+
+            <div className='form-group'>
+              <label>Descripción:</label>
+              <textarea name='description' value={form.description} onChange={handleChange} />
+            </div>
+
+            {/* Ajustado a las clases del archivo SCSS */}
+            <div className='form-group'>
+              <label style={{ fontWeight: 'bold' }}>Cantidad por Talle:</label>
+              <div className="size-stock-container">
+                {['S', 'M', 'L', 'XL'].map((size) => (
+                  <div key={size} className="size-stock-box">
+                    <label>{size}</label>
+                    <input
+                      type="number"
+                      min="0"
+                      placeholder="0"
+                      value={form.stock[size] ?? 0}
+                      onChange={(e) => handleSizeStockChange(size, e.target.value)}
+                      required
+                    />
                   </div>
                 ))}
-                <button type="button" className="btn-action" onClick={addUrlField}>+ Añadir URL</button>
               </div>
-            )}
-          </div>
+            </div>
 
-          <button type="submit" className="btn-submit" disabled={loading}>
-            {loading ? "Guardando..." : "Guardar Cambios"}
-          </button>
+            <div className='form-group'>
+              <label>Categoría:</label>
+              <div className='checkbox-group'>
+                <label><input type="radio" name="category" value="short" checked={form.category === "short"} onChange={handleChange} /> Short</label>
+                <label><input type="radio" name="category" value="pantalon" checked={form.category === "pantalon"} onChange={handleChange} /> Pantalón</label>
+                <label><input type="radio" name="category" value="jogging" checked={form.category === "jogging"} onChange={handleChange} /> Jogging</label>
+                <label><input type="radio" name="category" value="gorra" checked={form.category === "gorra"} onChange={handleChange} /> Gorra</label>
+              </div>
+            </div>
 
-        </form>
-      </div>
-    </section>
-  </div>
-);
+            <div className='form-group image-manager-box'>
+              <label style={{ fontWeight: 'bold' }}>Método de carga de imágenes:</label>
+              <div className="image-type-selector">
+                <label><input type="radio" name="imageType" value="file" checked={imageType === "file"} onChange={() => setImageType("file")} /> Subir desde PC</label>
+                <label><input type="radio" name="imageType" value="url" checked={imageType === "url"} onChange={() => setImageType("url")} /> Pegar URL</label>
+              </div>
+
+              {imageType === "file" ? (
+                <div>
+                  <input type="file" name="image" accept="image/*" multiple onChange={handleFileChange} />
+                  {imagePreviews.length > 0 && (
+                    <div className="image-previews">
+                      {imagePreviews.map((preview, index) => (
+                        <img key={index} src={preview} alt={`Vista previa ${index + 1}`} />
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div>
+                  {urls.map((url, index) => (
+                    <div key={index} className="url-input-row">
+                      <input type="text" value={url} onChange={(e) => handleUrlChange(index, e.target.value)} />
+                    </div>
+                  ))}
+                  <button type="button" className="btn-action" onClick={addUrlField}>+ Añadir URL</button>
+                </div>
+              )}
+            </div>
+
+            <button type="submit" className="btn-submit" disabled={loading}>
+              {loading ? "Guardando..." : "Guardar Cambios"}
+            </button>
+          </form>
+        </div>
+      </section>
+    </div>
+  );
 }

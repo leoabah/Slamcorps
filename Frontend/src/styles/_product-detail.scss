@@ -161,6 +161,24 @@
     }
 }
 
+.btn-size.tachado {
+  position: relative;
+  color: #a8a8a8 !important;
+  background-color: #f4f4f4 !important;
+  border-color: #e2e2e2 !important;
+  text-decoration: line-through; /* 👈 Genera la línea tachada sobre la letra */
+  cursor: not-allowed !important;
+  opacity: 0.5;
+}
+
+.txt-agotado {
+  color: #d90429 !important; /* Rojo intenso */
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+
 @media (max-width: 768px ) {
     .product-detail{
         flex-direction: column;

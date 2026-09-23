@@ -15,8 +15,12 @@ export const Alta = () => {
       price:"",
       category:"",
       description:"",
-      stock:""
-
+      stock:{
+        S:0,
+        M:0,
+        L:0,
+        XL:0
+      }
     };
     const {
       form,
@@ -82,6 +86,13 @@ export const Alta = () => {
     let payload;
     let headers = { "Authorization" : `Bearer ${token}`};
 
+    const cleanStock ={
+      S: Number(form.stock.S || 0),
+      M: Number(form.stock.M || 0),
+      L: Number(form.stock.L || 0),
+      XL: Number (form.stock.XL || 0)
+    };
+
     if (imageType === "file") {
       if (files.length === 0) {
         setSubmitError("Agrega al menos una imagen del producto.");
@@ -89,7 +100,15 @@ export const Alta = () => {
       }
 
       payload = new FormData();
-      Object.entries(data).forEach(([key, value]) => payload.append(key, value));
+      payload.append("title", data.title);
+      payload.append("price",Number(data.price));
+      payload.append("category",data.category);
+      payload.append("description", data.description);
+     //🟢 ENVIAR STOCK POR TALLE COMO JSON EN EL FORMDATA
+     payload.append("stock", JSON.stringify(cleanStock));
+
+
+      //Object.entries(data).forEach(([key, value]) => payload.append(key, value));
       files.forEach((file) => payload.append("image", file))
 
       // Axios maneja automáticamente el Content-Type con FormData, no es necesario especificarlo
@@ -106,7 +125,12 @@ export const Alta = () => {
         price: Number(data.price),
         category: data.category,
         description: data.description,
-        stock: Number(data.stock),
+        stock: {
+          S: Number(form.stock.S),
+          M: Number(form.stock.M),
+          L: Number(form.stock.L),
+          XL: Number(form.stock.XL)
+        },
         imageURLs: clearUrls
       };
       headers["Content-Type"] = "application/json";
@@ -185,29 +209,6 @@ export const Alta = () => {
 
           <div className='form-group'>
             <label>
-              Precio:
-            </label>
-            <input
-            type="number"
-            name='price'
-            placeholder="Solo numero"
-            value={form.price}
-             onChange={handleChange}
-             onBlur={handleBlur}
-            />
-            {
-              errors.price &&(
-                <p className='error'>
-                  {errors.price}
-                </p>
-              )
-            }
-          </div>
-
-         
-
-          <div className='form-group'>
-            <label>
               Descripción:
             </label>
             <textarea
@@ -227,28 +228,34 @@ export const Alta = () => {
             }
           </div>
 
-          <div className='form-group'>
-            <label>
-              cantidad:
-            </label>
-            <input
-            type="number"
-            name='stock'
-            placeholder="Stock disponible"
-            value={form.stock}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            />
-            {
-              errors.stock && (
-                <p className='error'>
-                  {errors.stock}
-                </p>
-              )
-            }
-          </div>
-
-          
+ <div className='form-group'>
+  <label>Cantidad por Talle:</label>
+  <div className="size-stock-container">
+    {['S', 'M', 'L', 'XL'].map((size) => (
+      <div key={size} className="size-stock-box">
+        <label>{size}</label>
+        <input
+          type="number"
+          min="0"
+          placeholder="0"
+          value={form.stock[size] ?? 0}
+          onChange={(e) => {
+            handleChange({
+              target: {
+                name: 'stock',
+                value: {
+                  ...form.stock,
+                  [size]: Number(e.target.value)
+                }
+              }
+            });
+          }}
+        />
+      </div>
+    ))}
+  </div>
+</div>
+     
             {/* ─── CONTROL DE IMÁGENES HÍBRIDO ─── */}
             <div className='form-group' style={{ border: '1px solid #ddd', padding: 15, borderRadius: 8, marginTop: 20 }}>
               <label style={{ fontWeight: 'bold', marginBottom: 10, display: 'block' }}>Método de carga de imágenes:</label>

@@ -1,7 +1,43 @@
-
 import { Preference, Payment } from "mercadopago";
 import Order from "../models/Order.js";
+import Product from "../models/Product.js"; // 🟢 Importación indispensable para modificar las existencias
 import client from "../config/mp.js"; 
+
+// 🔍 FUNCIÓN AUXILIAR REUTILIZABLE: Descuenta el stock de los productos comprados por talle
+const descontarStockDeOrden = async (orderId) => {
+    try {
+        const order = await Order.findById(orderId);
+        if (!order) return;
+
+        // Evitamos descontar stock dos veces si la orden ya había sido pagada/aprobada
+        if (order.status === "Pagado") return;
+
+        console.log(`📉 Iniciando descuento de stock para la orden: ${orderId}`);
+
+        for (const item of order.products) {
+            const product = await Product.findById(item.productId);
+            
+            if (product) {
+                const talleComprado = item.size || "default";
+                const cantidadComprada = Number(item.quantity || 1);
+
+                // Verificamos si el producto maneja stock estructurado por talle
+                if (product.stock && product.stock[talleComprado] !== undefined) {
+                    const stockActual = Number(product.stock[talleComprado] || 0);
+                    
+                    // Restamos las unidades asegurando que el límite mínimo sea 0
+                    product.stock[talleComprado] = Math.max(0, stockActual - cantidadComprada);
+                    
+                    // Guardamos el cambio en MongoDB
+                    await product.save();
+                    console.log(`✅ Stock actualizado para ${product.title} (Talle: ${talleComprado}): ${stockActual} -> ${product.stock[talleComprado]}`);
+                }
+            }
+        }
+    } catch (error) {
+        console.error("❌ Error crítico al descontar stock de la orden:", error);
+    }
+};
 
 // 🚀 1. WEBHOOK: Procesa la respuesta automática de Mercado Pago
 export const receiveWebhook = async (req, res) => {
@@ -20,6 +56,9 @@ export const receiveWebhook = async (req, res) => {
                 const orderId = paymentData.metadata?.order_id;
 
                 if (orderId) {
+                    // 🟢 Aplicamos descuento de stock antes de marcar la orden como Pagada
+                    await descontarStockDeOrden(orderId);
+
                     await Order.findByIdAndUpdate(
                         orderId,
                         {
@@ -48,14 +87,12 @@ export const createOrder = async (req, res) => {
             return res.status(400).json({ message: "El carrito está vacío" });
         }
 
-        // Formateamos los productos para la base de datos de manera segura usando 'p'
         const formattedProducts = products.map((p) => ({
             productId: p.productId || p._id,
             size: p.size || "default",
             quantity: Number(p.quantity || 1)
         }));
        
-        // Guardamos el registro inicial en MongoDB en estado Pendiente
         const order = await Order.create({
             user: req.user.id,
             products: formattedProducts,
@@ -66,21 +103,20 @@ export const createOrder = async (req, res) => {
 
         console.log("✅ ORDEN CREADA EN MONGO CON ID:", order._id);
 
-        // CONDICIÓN A: CLIENTE ELIGIÓ MERCADO PAGO
         if (paymentMethod === "mercadopago") {
             const preference = new Preference(client);
 
             const data = await preference.create({
                 body: {
                     items: products.map((p) => ({
-                        title: p.title || p.name || "Producto de Librería Cósmica",
+                        title: p.title || p.name || "Producto Slam Corps",
                         quantity: Number(p.quantity || 1),
                         unit_price: Number(p.price || 0),
                         currency_id: "ARS"
                     })),
                     metadata: {
                         total: total,
-                        order_id: order._id.toString() // Guardamos el ID de la orden aquí adentro
+                        order_id: order._id.toString()
                     },
                     notification_url: "https://onrender.com",
                     back_urls: {
@@ -98,8 +134,6 @@ export const createOrder = async (req, res) => {
                 preferenceId: data.id
             });
         } 
-        
-        // CONDICIÓN B: CLIENTE ELIGIÓ TRANSFERENCIA BANCARIA
         else if (paymentMethod === "transferencia") {
             return res.status(201).json({
                 message: "Orden registrada correctamente bajo transferencia bancaria.",
@@ -141,21 +175,26 @@ export const getAllOrders = async (req, res) => {
     }
 };
 
-// Agrega esto al final de backend/controllers/orderController.js
+// 🚀 5. UPDATE ORDER STATUS: Modificación manual desde el Dashboard de administración
 export const updateOrderStatus = async (req, res) => {
     try {
         const { id } = req.params;
         const { status } = req.body;
 
-        // Validamos estrictamente según los estados que soporta el Schema de tu Base de Datos
         if (!["Pendiente", "Pagado", "Cancelado"].includes(status)) {
             return res.status(400).json({ message: "Estado de orden no válido" });
         }
 
+        // 🟢 Si el administrador aprueba manualmente la transferencia, descontamos stock primero
+        if (status === "Pagado") {
+            await descontarStockDeOrden(id);
+        }
+
+        // Corrección del warning de Mongoose usando 'returnDocument'
         const updatedOrder = await Order.findByIdAndUpdate(
             id,
             { status },
-            { new: true }
+            { returnDocument: 'after' }
         );
 
         if (!updatedOrder) {

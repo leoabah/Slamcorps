@@ -61,7 +61,28 @@ export default function ProductTable({
                                     "es-Ar"
                                 )}
                             </td>
-                            <td>{product.stock}</td>
+                            {/* 🟢 CÓDIGO NUEVO ADAPTADO A TALLES */}
+                           <td>
+                                {(() => {
+                                 // Calculamos el stock total del producto para la fila
+        const tStock = product.stock && typeof product.stock === 'object'
+            ? Object.values(product.stock).reduce((a, b) => a + (b || 0), 0)
+            : 0;
+            
+        // Si el backend te devuelve un desglose, creamos un texto descriptivo interactivo
+        const sizesTooltip = product.stock && typeof product.stock === 'object'
+            ? `S: ${product.stock.S || 0} | M: ${product.stock.M || 0} | L: ${product.stock.L || 0} | XL: ${product.stock.XL || 0}`
+            : 'Sin desglose';
+
+        return (
+            <span title={sizesTooltip} style={{ cursor: 'help', fontWeight: '500' }}>
+                {tStock} <small style={{ color: '#777', fontSize: '0.8rem' }}>({sizesTooltip})</small>
+            </span>
+        );
+    })()}
+</td>
+
+
                             <td className="actions">
                                 <Link 
                                   to={`/edit/${product._id}`}>
