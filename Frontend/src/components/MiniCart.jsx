@@ -1,6 +1,7 @@
 import { useContext } from "react";
 import { Link } from "react-router-dom";
 import { CartContext } from "@/context/cartContext.js";
+import { getImageUrl } from "@/utils/imageUrl";
 
 export default function MiniCart({ setOpenCart }) {
   const {
@@ -38,16 +39,14 @@ export default function MiniCart({ setOpenCart }) {
           </div>
         ) : (
           <>
-            {cart.map((item) => (
-              <div key={item._id} className="mini-cart-item">
-                <img
-                  src={
-                    Array.isArray(item.image)
-                      ? import.meta.env.BASE_URL + item.image[0].replace("/", "")
-                      : import.meta.env.BASE_URL + item.image.replace("/", "")
-                  }
-                  alt={item.name || item.title}
-                />
+            {cart.map((item) => {
+              const imageSrc = getImageUrl(
+                Array.isArray(item.image) ? item.image[0] : item.image
+              );
+
+              return (
+                <div key={item._id} className="mini-cart-item">
+                  <img src={imageSrc} alt={item.name || item.title} />
 
                 <div className="mini-cart-info">
                   <h4>{item.name || item.title}</h4>
@@ -65,7 +64,8 @@ export default function MiniCart({ setOpenCart }) {
                   </div>
                 </div>
               </div>
-            ))}
+              );
+            })}
 
             <div className="mini-cart-total">
               <h3>Total: $ {Number(totalPrice).toFixed(2)}</h3>
