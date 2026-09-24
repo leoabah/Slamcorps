@@ -110,11 +110,17 @@ function Checkout() {
                 {cart.map(item => (
                   <div key={`${item._id}-${item.size || "default"}`} className="checkout-item">
                     <div className="checkout-image">
-                      <img src={
-                        Array.isArray(item.image)
-                          ? import.meta.env.BASE_URL + item.image[0].replace("/", "")
-                          : import.meta.env.BASE_URL + item.image.replace("/", "")
-                      } alt={item.title} />
+                      <img 
+                         src={
+                              (() => {
+                                 const imgSrc = Array.isArray(item.image) ? item.image[0] : item.image;
+                                        if (!imgSrc) return "";
+                                        if (imgSrc.startsWith("http")) return imgSrc;
+                                        return import.meta.env.BASE_URL + imgSrc.replace(/^\//, "");
+                                      })()
+                              } 
+                              alt={item.title} 
+                       />
                     </div>
                     <div className="checkout-details">
                       <div className="checkout-detail-text">

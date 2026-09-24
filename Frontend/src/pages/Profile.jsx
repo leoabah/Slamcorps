@@ -74,7 +74,7 @@ export default function Profile() {
                                 </ul>
 
                                 <p className="order-total">
-                                    Total: \${(order.total || 0).toLocaleString("es-AR")}
+                                    Total: ${(order.total || 0).toLocaleString("es-AR")}
                                 </p>
                                 <p className="order-status-badge">
                                     Estado: <span className={`status-${order.status?.toLowerCase()}`}>

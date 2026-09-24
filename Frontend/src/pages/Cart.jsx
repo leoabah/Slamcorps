@@ -47,7 +47,7 @@ export default function Cart(){
                         )}
 
                         <p>X{item.quantity}</p>
-                        <p>\${item.price}</p>
+                        <p>${item.price}</p>
                         
                         <div className="quantity-controls">
                             {/* 🟢 CORRECCIÓN: Se pasa el id y el talle para disminuir de forma selectiva */}
@@ -79,7 +79,7 @@ export default function Cart(){
                     </div>
                 ))}
 
-                <h2 style={{background:"white"}}>Total: \${totalPrice}</h2>
+                <h2 style={{background:"white"}}>Total: ${totalPrice}</h2>
 
                 <div className="botton-cart">
                     <button onClick={clearCart}>

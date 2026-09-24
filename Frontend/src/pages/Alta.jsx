@@ -1,122 +1,122 @@
 import { useState } from 'react';
 import { validations } from '../utils/formValidations';
-// import imgALtas from "@/assets/imgALtas.png";
-import "@/styles/alta.scss"
-import  useForm  from '../hooks/useForm';
+import '../styles/alta.scss';
+import useForm from '../hooks/useForm';
 import productsApi from '../api/productsApi';
 
-//import { data } from 'react-router-dom';
+const categoryOptions = ['Short', 'Pantalón', 'Jogging', 'Gorra'];
+const stockSizes = ['S', 'M', 'L', 'XL'];
 
 export const Alta = () => {
+  const initialForm = {
+    title: '',
+    price: '',
+    category: 'Short',
+    description: '',
+    stock: {
+      S: 0,
+      M: 0,
+      L: 0,
+      XL: 0,
+    },
+  };
 
-  const initiaForm =
-    {
-      title:"",
-      price:"",
-      category:"",
-      description:"",
-      stock:{
-        S:0,
-        M:0,
-        L:0,
-        XL:0
-      }
-    };
-    const {
-      form,
-      errors,
-      handleSubmit,
-      handleChange,
-      handleBlur,
-      resetForm
-    } =
-    useForm(initiaForm, validations);
+  const {
+    form,
+    errors,
+    handleSubmit,
+    handleChange,
+    handleBlur,
+    resetForm,
+  } = useForm(initialForm, validations);
 
-    const MAX_IMAGES = 4;
-
-  const [imageType, setImageType] = useState("file");
-  const [ loading, setLoading] = useState(false);
+  const MAX_IMAGES = 4;
+  const [imageType, setImageType] = useState('file');
+  const [loading, setLoading] = useState(false);
   const [submitError, setSubmitError] = useState(null);
   const [submitSuccess, setSubmitSuccess] = useState(false);
-  
-  const [files, setFiles]=useState([])
+  const [files, setFiles] = useState([]);
   const [imagePreviews, setImagePreviews] = useState([]);
+  const [urls, setUrls] = useState(['']);
 
-  const handleFileChange = (e) =>{
+  const handleFileChange = (e) => {
     const selectedFiles = Array.from(e.target.files);
     if (!selectedFiles.length) return;
 
-    const combined = [...files, ...selectedFiles].slice(0,     MAX_IMAGES);
-      setFiles(combined);
-      setImagePreviews(combined.map((file)=>URL.createObjectURL((file))))
-    };
-    
-
-  const removeFile = (indexToRemove) =>{
-    const combined = files.filter((_, i) => i !== indexToRemove);
+    const combined = [...files, ...selectedFiles].slice(0, MAX_IMAGES);
     setFiles(combined);
-    setImagePreviews(combined.map((file) => URL.createObjectURL(file)))
-   
+    setImagePreviews(combined.map((file) => URL.createObjectURL(file)));
   };
 
-  const [urls, setUrls]= useState([""]);
+  const removeFile = (indexToRemove) => {
+    const combined = files.filter((_, index) => index !== indexToRemove);
+    setFiles(combined);
+    setImagePreviews(combined.map((file) => URL.createObjectURL(file)));
+  };
 
   const handleUrlChange = (index, value) => {
-    const updateUrls = [...urls];
-    updateUrls[index] = value;
-    setUrls(updateUrls);
+    const updatedUrls = [...urls];
+    updatedUrls[index] = value;
+    setUrls(updatedUrls);
   };
 
   const addUrlField = () => {
-    if (urls.length < MAX_IMAGES)
-      setUrls([...urls, ""]);
+    if (urls.length < MAX_IMAGES) {
+      setUrls([...urls, '']);
+    }
   };
 
-  const removeUrlField = (indexToRemove) =>{
-    const updateUrls = urls.filter((_, index) => index  !== indexToRemove);
-    setUrls(updateUrls.length >0 ? updateUrls : [""]);
-  }
+  const removeUrlField = (indexToRemove) => {
+    const updatedUrls = urls.filter((_, index) => index !== indexToRemove);
+    setUrls(updatedUrls.length > 0 ? updatedUrls : ['']);
+  };
 
-  
-  const  sendForm = async (data)=>{
+  const handleStockChange = (size, value) => {
+    handleChange({
+      target: {
+        name: 'stock',
+        value: {
+          ...form.stock,
+          [size]: Number(value) || 0,
+        },
+      },
+    });
+  };
+
+  const sendForm = async (data) => {
     setSubmitError(null);
     setSubmitSuccess(false);
-    
-    const token = localStorage.getItem("token");
-    let payload;
-    let headers = { "Authorization" : `Bearer ${token}`};
 
-    const cleanStock ={
+    const token = localStorage.getItem('token');
+    const cleanStock = {
       S: Number(form.stock.S || 0),
       M: Number(form.stock.M || 0),
       L: Number(form.stock.L || 0),
-      XL: Number (form.stock.XL || 0)
+      XL: Number(form.stock.XL || 0),
     };
 
-    if (imageType === "file") {
+    let payload;
+    const headers = {
+      Authorization: `Bearer ${token}`,
+    };
+
+    if (imageType === 'file') {
       if (files.length === 0) {
-        setSubmitError("Agrega al menos una imagen del producto.");
+        setSubmitError('Agrega al menos una imagen del producto.');
         return;
       }
 
       payload = new FormData();
-      payload.append("title", data.title);
-      payload.append("price",Number(data.price));
-      payload.append("category",data.category);
-      payload.append("description", data.description);
-     //🟢 ENVIAR STOCK POR TALLE COMO JSON EN EL FORMDATA
-     payload.append("stock", JSON.stringify(cleanStock));
-
-
-      //Object.entries(data).forEach(([key, value]) => payload.append(key, value));
-      files.forEach((file) => payload.append("image", file))
-
-      // Axios maneja automáticamente el Content-Type con FormData, no es necesario especificarlo
-      // headers["Content-Type"] = "multipart/form-data";
+      payload.append('title', data.title);
+      payload.append('price', Number(data.price));
+      payload.append('category', data.category);
+      payload.append('description', data.description);
+      payload.append('stock', JSON.stringify(cleanStock));
+      files.forEach((file) => payload.append('image', file));
     } else {
-      const clearUrls = urls.map((u) => u.trim()).filter((u) => u !== "");
-      if (clearUrls.length === 0){
-        setSubmitError("Ingresa al menos URL valida.");
+      const clearUrls = urls.map((url) => url.trim()).filter(Boolean);
+      if (clearUrls.length === 0) {
+        setSubmitError('Ingresa al menos una URL válida.');
         return;
       }
 
@@ -125,189 +125,210 @@ export const Alta = () => {
         price: Number(data.price),
         category: data.category,
         description: data.description,
-        stock: {
-          S: Number(form.stock.S),
-          M: Number(form.stock.M),
-          L: Number(form.stock.L),
-          XL: Number(form.stock.XL)
-        },
-        imageURLs: clearUrls
+        stock: cleanStock,
+        imageURLs: clearUrls,
       };
-      headers["Content-Type"] = "application/json";
+      headers['Content-Type'] = 'application/json';
     }
 
     setLoading(true);
-     try{
-      await productsApi.post("/", payload, { headers });
-
+    try {
+      await productsApi.post('/', payload, { headers });
       setSubmitSuccess(true);
       setFiles([]);
       setImagePreviews([]);
-      setUrls([""]);
+      setUrls(['']);
       resetForm();
-     } catch (error){
-      const message = error.response?.data?.message || "No se pudo crear el producto. Intenta de nuevo.";
+    } catch (error) {
+      const message =
+        error.response?.data?.message ||
+        'No se pudo crear el producto. Intenta de nuevo.';
       setSubmitError(message);
-     } finally {
+    } finally {
       setLoading(false);
-     }
+    }
   };
 
   return (
-     <div className='alta-contain'>
+    <div className='alta-page'>
       <section className='alta-container'>
-       <div className="alta-image">
-          {/* <img
-          //  src={imgALtas}
-           alt='banner de formulario'
-           /> */}
-       </div>
-       <div className='alta-form-container'>
-        <h1 style={{"marginBottom":25}}
-        className='alta-form-title'
-        >
-          Altas de Productos
-        </h1>
-        {submitSuccess && 
-        <p style={{color:"green",
-           fontWeight:"bold"
-        }}>
-          !Producto creado exitosamente!
-        </p>
-        }
-        {submitError && 
-        <p style={{color:"red",
-          fontWeight:"bold"
-        }}
-        ></p>
-        }
-        <form
-            className="alta-form"
+        <div className='alta-form-container'>
+          <h1 className='alta-form-title'>Título:</h1>
+
+          {submitSuccess && (
+            <p className='success-message'>¡Producto creado exitosamente!</p>
+          )}
+          {submitError && <p className='error-message'>{submitError}</p>}
+
+          <form
+            className='alta-form'
             onSubmit={handleSubmit(sendForm)}
-            encType="multipart/form-data"
->
-          <div className='form-group'>
-            <label>
-              Título:
-            </label>
-            <input
-             type='text'
-             name='title'
-             placeholder='Título del producto'
-             value={form.title}
-             onChange={handleChange}
-             onBlur={handleBlur}
-            />
-            {
-              errors.title &&(
-                <p className='error'>
-                  {errors.title}
-                </p>
-              )
-            }
-          </div>
+            encType='multipart/form-data'
+          >
+            <div className='form-group'>
+              <input
+                type='text'
+                name='title'
+                placeholder='Gorra Trucker Azul Oscuro'
+                value={form.title}
+                onChange={handleChange}
+                onBlur={handleBlur}
+              />
+              {errors.title && <p className='error-text'>{errors.title}</p>}
+            </div>
 
-          <div className='form-group'>
-            <label>
-              Descripción:
-            </label>
-            <textarea
+            <div className='form-group'>
+              <label>Precio:</label>
+              <input
+                type='number'
+                min='1'
+                name='price'
+                placeholder='17500'
+                value={form.price}
+                onChange={handleChange}
+                onBlur={handleBlur}
+              />
+              {errors.price && <p className='error-text'>{errors.price}</p>}
+            </div>
 
-            name='description'
-            placeholder="Descripción del producto..."
-            value={form.description}
-             onChange={handleChange}
-             onBlur={handleBlur}
-            />
-            {
-              errors.description && (
-                <p className='error'>
-                  {errors.description}
-                </p>
-              )
-            }
-          </div>
+            <div className='form-group'>
+              <label>Descripción:</label>
+              <textarea
+                name='description'
+                placeholder='Diseño moderno con frente estructurada, malla respirable y el logo distintivo bordado. Ideal para un look canchero y comodo todo el día. iCalidad premium para los que marcan la diferencia!'
+                value={form.description}
+                onChange={handleChange}
+                onBlur={handleBlur}
+              />
+              {errors.description && (
+                <p className='error-text'>{errors.description}</p>
+              )}
+            </div>
 
- <div className='form-group'>
-  <label>Cantidad por Talle:</label>
-  <div className="size-stock-container">
-    {['S', 'M', 'L', 'XL'].map((size) => (
-      <div key={size} className="size-stock-box">
-        <label>{size}</label>
-        <input
-          type="number"
-          min="0"
-          placeholder="0"
-          value={form.stock[size] ?? 0}
-          onChange={(e) => {
-            handleChange({
-              target: {
-                name: 'stock',
-                value: {
-                  ...form.stock,
-                  [size]: Number(e.target.value)
-                }
-              }
-            });
-          }}
-        />
-      </div>
-    ))}
-  </div>
-</div>
-     
-            {/* ─── CONTROL DE IMÁGENES HÍBRIDO ─── */}
-            <div className='form-group' style={{ border: '1px solid #ddd', padding: 15, borderRadius: 8, marginTop: 20 }}>
-              <label style={{ fontWeight: 'bold', marginBottom: 10, display: 'block' }}>Método de carga de imágenes:</label>
-              <div style={{ marginBottom: 15, display: 'flex', gap: 20 }}>
-                <label>
-                  <input type="radio" name="imageType" value="file" checked={imageType === "file"} onChange={() => setImageType("file")} />
-                  Subir desde PC (Cliente)
+            <div className='form-group'>
+              <label>Cantidad por Talle:</label>
+              <div className='size-stock-container'>
+                {stockSizes.map((size) => (
+                  <div key={size} className='size-stock-box'>
+                    <span className='size-label'>{size}</span>
+                    <input
+                      type='number'
+                      min='0'
+                      value={form.stock[size] ?? 0}
+                      onChange={(e) => handleStockChange(size, e.target.value)}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className='form-group'>
+              <label>Categoría:</label>
+              <div className='category-options'>
+                {categoryOptions.map((option) => (
+                  <label key={option} className='category-option'>
+                    <input
+                      type='radio'
+                      name='category'
+                      value={option}
+                      checked={form.category === option}
+                      onChange={handleChange}
+                    />
+                    <span>{option}</span>
+                  </label>
+                ))}
+              </div>
+              {errors.category && <p className='error-text'>{errors.category}</p>}
+            </div>
+
+            <div className='form-group image-group'>
+              <label>Método de carga de imágenes:</label>
+              <div className='image-mode-switch'>
+                <label className={imageType === 'file' ? 'active' : ''}>
+                  <input
+                    type='radio'
+                    name='imageType'
+                    value='file'
+                    checked={imageType === 'file'}
+                    onChange={() => setImageType('file')}
+                  />
+                  <span>Subir desde PC</span>
                 </label>
-                <label>
-                  <input type="radio" name="imageType" value="url" checked={imageType === "url"} onChange={() => setImageType("url")} />
-                  Pegar URL de Internet (Vos)
+                <label className={imageType === 'url' ? 'active' : ''}>
+                  <input
+                    type='radio'
+                    name='imageType'
+                    value='url'
+                    checked={imageType === 'url'}
+                    onChange={() => setImageType('url')}
+                  />
+                  <span>Pegar URL</span>
                 </label>
               </div>
 
-              {/* RENDER CONDICIONAL SEGÚN LA SELECCIÓN */}
-              {imageType === "file" ? (
-                <div>
-                  <input type="file" name="image" accept="image/*" multiple disabled={files.length >= MAX_IMAGES} onChange={handleFileChange} />
+              {imageType === 'file' ? (
+                <div className='upload-box'>
+                  <label className='file-input-label'>
+                    <span>Elegir archivos</span>
+                    <input
+                      type='file'
+                      name='image'
+                      accept='image/*'
+                      multiple
+                      disabled={files.length >= MAX_IMAGES}
+                      onChange={handleFileChange}
+                    />
+                  </label>
+                  <span className='file-count'>
+                    {files.length > 0 ? `${files.length} archivos seleccionados` : 'Sin archivos seleccionados'}
+                  </span>
+
                   {imagePreviews.length > 0 && (
-                    <div style={{ display: "flex", gap: 10, marginTop: 10, flexWrap: "wrap" }}>
+                    <div className='preview-grid'>
                       {imagePreviews.map((src, index) => (
-                        <div key={src} style={{ position: "relative" }}>
-                          <img src={src} alt={`Vista previa ${index + 1}`} style={{ width: 80, height: 80, objectFit: "cover", borderRadius: 8, border: index === 0 ? "3px solid #2e7d32" : "1px solid #ccc" }} />
-                          {index === 0 && <span style={{ position: "absolute", bottom: 2, left: 2, background: "#2e7d32", color: "#fff", fontSize: 8, padding: "1px 4px", borderRadius: 4 }}>Principal</span>}
-                          <button type="button" onClick={() => removeFile(index)} style={{ position: "absolute", top: -5, right: -5, background: "#c62828", color: "#fff", border: "none", borderRadius: "50%", width: 18, height: 18, cursor: "pointer" }}>×</button>
+                        <div key={`${src}-${index}`} className='preview-item'>
+                          <img src={src} alt={`Vista previa ${index + 1}`} />
+                          {index === 0 && <span className='preview-label'>Principal</span>}
+                          <button type='button' onClick={() => removeFile(index)}>
+                            ×
+                          </button>
                         </div>
                       ))}
                     </div>
                   )}
                 </div>
               ) : (
-                <div>
+                <div className='url-box'>
                   {urls.map((url, index) => (
-                    <div key={index} style={{ display: 'flex', gap: 5, marginBottom: 8, alignItems: 'center' }}>
-                      <input type="text" placeholder={`URL de la imagen ${index + 1} ${index === 0 ? '(Principal)' : ''}`} value={url} onChange={(e) => handleUrlChange(index, e.target.value)} style={{ flex: 1 }} />
+                    <div key={index} className='url-row'>
+                      <input
+                        type='text'
+                        placeholder={`URL de la imagen ${index + 1}${index === 0 ? ' (Principal)' : ''}`}
+                        value={url}
+                        onChange={(e) => handleUrlChange(index, e.target.value)}
+                      />
                       {urls.length > 1 && (
-                        <button type="button" onClick={() => removeUrlField(index)} style={{ background: '#c62828', color: '#fff', border: 'none', padding: '5px 10px', borderRadius: 4, cursor: 'pointer' }}>Eliminar</button>
+                        <button type='button' className='remove-url' onClick={() => removeUrlField(index)}>
+                          Eliminar
+                        </button>
                       )}
                     </div>
                   ))}
                   {urls.length < MAX_IMAGES && (
-                    <button type="button" onClick={addUrlField} style={{ background: '#0288d1', color: '#fff', border: 'none', padding: '5px 10px', borderRadius: 4, cursor: 'pointer', marginTop: 5 }}>+ Añadir otra URL</button>
+                    <button type='button' className='add-url' onClick={addUrlField}>
+                      + Añadir otra URL
+                    </button>
                   )}
                 </div>
               )}
             </div>
-              <button type="submit" disabled={loading} style={{ marginTop: 25, width: '100%', padding: '10px',
-               justifyItems:"center", background: '#2e7d32', color: '#fff', border: 'none', borderRadius: 4, cursor: 'pointer' }}>{loading ? "Guardando..." : "Crear Producto"}
-              </button>
-        </form>
-       </div>
+
+            <button type='submit' className='btn-submit' disabled={loading}>
+              {loading ? 'Guardando...' : 'Crear Producto'}
+            </button>
+          </form>
+        </div>
       </section>
     </div>
   );
-}
+};

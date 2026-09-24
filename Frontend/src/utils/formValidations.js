@@ -14,6 +14,11 @@ export const validations = {
         pattern: /^[1-9][0-9]*$/,
         message: "solo números positivos"
     },
+    category: {
+        required: true,
+        pattern: /^[A-Za-zÀ-ÿ0-9\s\-_./]{2,40}$/,
+        message: "la categoría debe tener entre 2 y 40 caracteres"
+    },
     description: {
         required: true,
         pattern: /^[\s\S]{10,500}$/, // 🟢 Cambiado a [\s\S] para que acepte saltos de línea (Enter) en la descripción del producto sin fallar
