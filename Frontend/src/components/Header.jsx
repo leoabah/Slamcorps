@@ -16,10 +16,9 @@ export default function Header() {
   const { search = "", setSearch = () => {} } = searchContext;
 
   const cartContext = useContext(CartContext) ?? {};
-  const { totalItems = 0 } = cartContext;
+  const { totalItems = 0 , clearCart } = cartContext;
 
-  const [menuOpen, setMenuOpen]= 
-  useState(false);
+  const [menuOpen, setMenuOpen]= useState(false);
   
   const [openCart , setOpenCart]= useState(false);
   
@@ -28,8 +27,12 @@ export default function Header() {
   const firstName = user?.name?.split(" ")[0];
 
   const handleLogout = ()=> {
+    if (clearCart){
+      clearCart();
+    }
     logout()
       setMenuOpen(false);
+      setOpenCart(false);
   };
 
   return (

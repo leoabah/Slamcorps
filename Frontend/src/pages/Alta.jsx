@@ -4,7 +4,7 @@ import '../styles/alta.scss';
 import useForm from '../hooks/useForm';
 import productsApi from '../api/productsApi';
 
-const categoryOptions = ['Short', 'Pantalón', 'Jogging', 'Gorra'];
+const categoryOptions = ['Short', 'Pantalón', 'Jogging', 'Gorra', 'Remera'];
 const stockSizes = ['S', 'M', 'L', 'XL'];
 
 export const Alta = () => {

@@ -9,6 +9,15 @@ export default function EditProduct() {
   const { id } = useParams();
   const navigate = useNavigate();
   const MAX_IMAGES = 4;
+  const categoryOptions = [
+    { label: 'Short', value: 'short' },
+    { label: 'Pantalón', value: 'pantalon' },
+    { label: 'Jogging', value: 'jogging' },
+    { label: 'Gorra', value: 'gorra' },
+    { label: 'Remera', value: 'remera' }
+  ];
+
+  const normalizeCategory = (value) => String(value ?? '').trim().toLowerCase();
 
   // 1. Inicialización de los estados base del producto
   const [form, setForm] = useState({
@@ -222,10 +231,18 @@ export default function EditProduct() {
             <div className='form-group'>
               <label>Categoría:</label>
               <div className='checkbox-group'>
-                <label><input type="radio" name="category" value="short" checked={form.category === "short"} onChange={handleChange} /> Short</label>
-                <label><input type="radio" name="category" value="pantalon" checked={form.category === "pantalon"} onChange={handleChange} /> Pantalón</label>
-                <label><input type="radio" name="category" value="jogging" checked={form.category === "jogging"} onChange={handleChange} /> Jogging</label>
-                <label><input type="radio" name="category" value="gorra" checked={form.category === "gorra"} onChange={handleChange} /> Gorra</label>
+                {categoryOptions.map((option) => (
+                  <label key={option.value}>
+                    <input
+                      type="radio"
+                      name="category"
+                      value={option.value}
+                      checked={normalizeCategory(form.category) === normalizeCategory(option.value)}
+                      onChange={handleChange}
+                    />
+                    {option.label}
+                  </label>
+                ))}
               </div>
             </div>
 
