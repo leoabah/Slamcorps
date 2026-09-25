@@ -34,7 +34,7 @@
 
     width:100%;
 
-    height:270px;
+    aspect-ratio: 1.15 / 1;
 
     display:flex;
 
@@ -46,6 +46,8 @@
 
     background:white;
 
+    overflow:hidden;
+
 }
 
 .product-image img{
@@ -54,7 +56,11 @@
 
     height:100%;
 
-    object-fit:contain;
+    object-fit:cover;
+
+    object-position:center;
+
+    border-radius:8px;
 
 }
 
@@ -244,7 +250,7 @@
     }
 
     .product-image{
-        height:240px;
+        aspect-ratio: 1.15 / 1;
     }
 
     .product-content h3{
@@ -263,13 +269,13 @@
     .product-card{
 
         max-width:80%;
-        height: 516px;
+        height: auto;
 
     }
 
     .product-image{
 
-        height:220px;
+        aspect-ratio: 1.15 / 1;
         
         padding:15px;
 
@@ -319,7 +325,7 @@
 
     .product-image{
 
-        height:200px;
+        aspect-ratio: 1.15 / 1;
 
         padding:12px;
 
