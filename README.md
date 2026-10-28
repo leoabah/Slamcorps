@@ -2,7 +2,7 @@
 
 **Aplicación web de comercio electrónico Full Stack**
 
-Slamcorps es un proyecto de comercio electrónico desarrollado para ofrecer una experiencia de compra online y facilitar la gestión de productos de un negocio. El proyecto integra una interfaz de usuario con un backend que permite gestionar la información y las operaciones de la aplicación.
+Slamcorps es un proyecto de comercio electrónico desarrollado para ofrecer una experiencia de compra online y facilitar la gestión de productos de un negocio. Integra una interfaz de usuario con un backend que permite gestionar la información y las operaciones de la aplicación, además de incorporar **Mercado Pago como medio de pago online**.
 
 🌐 **Demo:** [slamcorps.vercel.app](https://slamcorps.vercel.app/)
 
@@ -12,7 +12,7 @@ Slamcorps es un proyecto de comercio electrónico desarrollado para ofrecer una 
 
 Slamcorps forma parte de mi experiencia práctica como desarrollador web y representa una oportunidad para aplicar conocimientos de desarrollo frontend y backend en un proyecto orientado a un negocio real.
 
-El desarrollo incluye una interfaz de comercio electrónico, comunicación con una API y funcionalidades para la gestión de productos.
+El desarrollo incluye una interfaz de comercio electrónico, comunicación con una API, funcionalidades para la gestión de productos y la integración de **Mercado Pago para gestionar el proceso de pago de las compras online**.
 
 ## ✨ Funcionalidades
 
@@ -23,11 +23,13 @@ El desarrollo incluye una interfaz de comercio electrónico, comunicación con u
 - ➕ Alta de productos con información como título, precio, categoría, descripción y stock.
 - 🖼️ Gestión de imágenes de productos.
 - 🔗 Comunicación entre frontend y backend mediante una API.
+- 💳 **Integración de Mercado Pago como medio de pago online.**
 - 📱 Interfaz web adaptable a diferentes dispositivos.
 
 ## 🛠️ Tecnologías
 
 ### Frontend
+
 - React
 - Vite
 - JavaScript
@@ -35,11 +37,17 @@ El desarrollo incluye una interfaz de comercio electrónico, comunicación con u
 - CSS / Sass
 
 ### Backend
+
 - Node.js
 - Express.js
 - API REST
 
+### Pagos online
+
+- Mercado Pago
+
 ### Herramientas y despliegue
+
 - Git y GitHub
 - Vercel para el frontend
 - Render para el backend
@@ -102,11 +110,11 @@ cd Backend
 npm install
 ```
 
-Configura las variables de entorno que requiera el proyecto, como el puerto del servidor, la conexión a la base de datos y los secretos de autenticación.
+Configura las variables de entorno que requiera el proyecto, como el puerto del servidor, la conexión a la base de datos y los secretos de autenticación. Si la integración de Mercado Pago utiliza credenciales mediante variables de entorno, configúralas también siguiendo la implementación del proyecto.
 
 Inicia el backend con el comando definido en los scripts de su `package.json`.
 
-> **Nota:** Los comandos de inicio y las variables de entorno deben verificarse con la configuración actual del proyecto antes de ejecutar la aplicación.
+> **Nota:** Los comandos de inicio y las variables de entorno deben verificarse con la configuración actual del proyecto antes de ejecutar la aplicación. No publiques credenciales ni tokens privados en el repositorio.
 
 ## 🌍 Demo online
 
@@ -120,9 +128,10 @@ Este proyecto me permitió trabajar en aspectos importantes del desarrollo web:
 
 - Construcción de interfaces con React.
 - Organización de una aplicación frontend.
-- Integración de una API con el cliente.
+- Integración de frontend y backend mediante una API.
 - Implementación de funcionalidades de autenticación.
 - Gestión de productos desde una interfaz administrativa.
+- Integración de Mercado Pago como medio de pago para un comercio electrónico.
 - Configuración de variables de entorno y despliegue.
 - Resolución de problemas durante el desarrollo y la puesta en producción.
 
